@@ -1,0 +1,4 @@
+Win.Title: My window title
+Win.Quit: Quit now
+Err.NoFile: File <Win.Title> was not found
+fmt.count: %d files in %s

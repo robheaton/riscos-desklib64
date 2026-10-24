@@ -14,11 +14,13 @@ All of DeskLib's C (about 270 files) and 259 veneers: 506 objects in `libDeskLib
 
 * **`pane`**: `Pane_CreateAndLink` with an offset and size given in code, `Pane_OpenEventHandler`, `Pane_GetSysHandle`, `Pane_Show`; `Pane2_CreateAndAddMain`, `Pane2_CreateAndAddPane` (offset and size from the template) and `Pane2_Show`. A click in a pane, the positions of both windows, a pane that follows its main window when it is dragged and a pane resized with its main window (`pane2_HRESIZE`).
 
+* **`msgs`** (command line, 32 checks): `MsgTrans_LoadFile` (found through the resource path), `MsgTrans_Lookup` and `MsgTrans_LookupPS` with up to four `%n` parameters, defaults (`Token:default`), a missing token, a result cut at the buffer size, `MsgTrans_LoseFile`; the SWI veneers `MessageTrans_FileInfo`, `OpenFile` (with a buffer in the heap), `Lookup` (with and without a buffer) and `CloseFile`; the global messages; `Msgs_LoadFile`, `Msgs_Lookup` (with an include and a default), `Msgs_printf` and `Msgs_DropGroup`.
+
 ## Known problems
 * The older `Dialog` library (`Dialog_WaitForClick`) does not return in testing: the task stops receiving events. It has not been explained yet. `Dialog2` is not affected and is the one to use.
 
 ## Not run yet
-`DragASpr`, `Font` and the font menu, `Print` and `PDriver`, `Clear`, `Clipboard`, `Filing`/`File`, `Msgs`/`MsgTrans`, `Url`, `Tinct`, `Serial`, `ColourTran`. They compile, the veneers were translated or written from the assembler, and the structures have the OS layout, but nobody has run them. If something fails, please open an issue with the function and what happened.
+`DragASpr`, `Font` and the font menu, `Print` and `PDriver`, `Clear`, `Clipboard`, `Filing`/`File`, `Url`, `Tinct`, `Serial`, `ColourTran`. They compile, the veneers were translated or written from the assembler, and the structures have the OS layout, but nobody has run them. If something fails, please open an issue with the function and what happened.
 
 ## Known limits
 * Arguments after the fourth to the translated veneers and structures passed by value are assumed to fit a 32-bit word (see docs/PORTING.md).

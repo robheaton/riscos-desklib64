@@ -1,0 +1,6 @@
+Hello:Hello, world
+Greet:Hello %0, you are %1
+Quit:Quit
+Both:%0 and %1 and %2 and %3
+# a comment
+Long:This is a rather longer message that is used to check that a result is cut off at the size of the buffer
