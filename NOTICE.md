@@ -17,7 +17,7 @@ DeskLib is **not** under the GPL.
 
 ## Modifications in this repository
 
-DeskLib64 is [DeskLib32](https://github.com/adyoull/desklib32) (Andrew Youll's build, commit `957863a`, which is upstream DeskLib master `f7469f4` with a few fixes), with 69 files modified and one added (`include/dl64.h`) so that it builds for 64-bit RISC OS and its structures keep the layout that the Window Manager uses. The 259 ARM assembler files are kept as they are and are not built: `gen/` and `hand/` have the same SWI veneers in C. Every change and its reason is in `MODIFICATIONS64.md`, and the exact edits are in `patches/desklib64-vs-desklib32.diff`.
+DeskLib64 is [DeskLib32](https://github.com/adyoull/desklib32) (Andrew Youll's build, commit `957863a`, which is upstream DeskLib master `f7469f4` with a few fixes), with 70 files modified and one added (`include/dl64.h`) so that it builds for 64-bit RISC OS and its structures keep the layout that the Window Manager uses. The 259 ARM assembler files are kept as they are and are not built: `gen/` and `hand/` have the same SWI veneers in C. Every change and its reason is in `MODIFICATIONS64.md`, and the exact edits are in `patches/desklib64-vs-desklib32.diff`.
 
 DeskLib's licence asks that altered copies are not passed on, but sent back so they can become official updates. In line with that, these changes are documented file by file and are being offered to DeskLib's maintainers.
 

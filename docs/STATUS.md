@@ -31,6 +31,8 @@ All of DeskLib's C (about 270 files) and 259 veneers: 506 objects in `libDeskLib
 
 * **`env`** (command line, 51 checks): `Str` (`strlencr`, `strcmpcr`, `strcatcr`, `strcpycr`, `strncpycr`, `Str_LeafName`, `stricmp`, `strnicmp`, `stricmpcr`, `strnicmpcr`, `strdup`, `MakeCR`, `MakeASCIIZ`, `MakeHex`, `DecodeHex`); `Time` (`ConvertTimeToUTCOrdinals`, `ConvertDateAndTime`, `ConvertStandardDateAndTime`, names and ordinal suffixes, for a fixed time); `Environment` (`SysVarRead`, `SysVarSet` for strings and numbers, `SysVarDelete`, `ExpandString` and its end pointer, `Command`, `OS_CLI`, `ModuleIsActive`, `OSVersion`, `TaskList`, `TaskListFree`, `TaskIsActive`).
 
+* **`misc`** (command line, 61 checks): `Coord` (point and rectangle tests, unions, window origin and conversions both ways), `LinkList` (all functions and macros), `TextFile` (`ReadToDelimiter`, `SkipBlanks`), `Screen` (`CacheModeInfo`, `ReadModeVariable`, the size, eigen factor and depth variables), `OS_Byte` and `OS_Word` (reads), `Module_Claim` and `Module_Free`, `Pointer` (get, set, restrict to a rectangle, unrestrict), `Kbd` (modifiers and `KeyDown` with nothing held), `Hourglass` (runs without a fault; the display is not checked). `Filter` and `Kbd_GET` (which waits for a key) are not run.
+
 ## Not run yet
 `Print` and `PDriver`, `Url`, `Tinct`, `Serial`. They compile, the veneers were translated or written from the assembler, and the structures have the OS layout, but nobody has run them. If something fails, please open an issue with the function and what happened.
 

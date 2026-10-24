@@ -1,12 +1,12 @@
 # DeskLib64 - every change from DeskLib32, and why
 
-This document lists **every** difference between the source in `src/` and DeskLib32 (Andrew Youll's build of upstream DeskLib: https://github.com/adyoull/desklib32, commit `957863a`), and says what is built from the assembler instead. For each change it gives the problem, the evidence, what was changed, what it means for programs that use the library, and how it was checked. The exact source changes are also in `patches/desklib64-vs-desklib32.diff` (69 modified files and 1 added).
+This document lists **every** difference between the source in `src/` and DeskLib32 (Andrew Youll's build of upstream DeskLib: https://github.com/adyoull/desklib32, commit `957863a`), and says what is built from the assembler instead. For each change it gives the problem, the evidence, what was changed, what it means for programs that use the library, and how it was checked. The exact source changes are also in `patches/desklib64-vs-desklib32.diff` (70 modified files and 1 added).
 
 ---
 
 ## 1. What the source is based on
 
-`src/` is DeskLib32 at `957863a` (638 files): 569 are byte-identical to it, 69 are modified (9 headers, 60 library C files) and 1 is added (`include/dl64.h`). The 259 ARM assembler files (`Libraries/*/*.s`) and their include files are **unchanged and not built**: `gen/` and `hand/` have the same SWI veneers in C (section 3).
+`src/` is DeskLib32 at `957863a` (638 files): 568 are byte-identical to it, 70 are modified (9 headers, 61 library C files) and 1 is added (`include/dl64.h`). The 259 ARM assembler files (`Libraries/*/*.s`) and their include files are **unchanged and not built**: `gen/` and `hand/` have the same SWI veneers in C (section 3).
 
 The target is AArch64 RISC OS 64, with the AArch64 RISC OS GCC 16 tool chain (0.14 or newer) and `-munixlib -O2 -fsigned-char`. On this target `int` and `long` are 32 and 64 bits and a pointer is 64 bits; the Window Manager's data structures are made of 32-bit words.
 
@@ -168,6 +168,14 @@ The validation string is compared with `0` and `0xffffffffu` as words (it is a `
 **Change.** The block uses `dl_ptr`, the name is converted with `DL_P`, `TaskNameFromHandle` takes the register in an `unsigned int`, and the loop frees `list[j]`.
 
 **Verification.** `tests/env`: the task list has the Filer in it, `Environment_TaskIsActive` finds it and does not find a task that is not running.
+
+### C14. `Pointer/Get.c` - the position bytes are signed
+
+**Problem.** `Pointer_GetPosition` reads the four position bytes into `char`s and adds them as `box[1] + (box[2] << 8)`. Norcroft's plain `char` is unsigned; with a signed `char` a low byte of 128 or more gives a negative number, so a pointer at x = 400 (low byte &90) was read as 400 - 256 = 144 (also in DeskLib32 when built with a signed `char`).
+
+**Change.** The block is `unsigned char`.
+
+**Verification.** `tests/misc`: the position set with `Pointer_SetPosition (400, 300)` reads back as 400, 300.
 
 ---
 

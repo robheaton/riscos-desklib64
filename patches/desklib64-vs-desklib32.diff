@@ -1310,6 +1310,18 @@ diff -ruN --text a/Libraries/Menu/Show.c b/Libraries/Menu/Show.c
    itemheight = menu->height + menu->gap;
  
    while(TRUE)
+diff -ruN --text a/Libraries/Pointer/Get.c b/Libraries/Pointer/Get.c
+--- a/Libraries/Pointer/Get.c	2026-10-24 11:39:09.289614731 +0100
++++ b/Libraries/Pointer/Get.c	2026-10-24 18:03:37.366287103 +0100
+@@ -21,7 +21,7 @@
+ 
+ os_error *Pointer_GetPosition(wimp_point *position)
+ {
+- byte         box[5]={6};
++ unsigned char box[5]={6};   /* the bytes are unsigned (Norcroft char is) */
+  os_error     *error = NULL;
+ 
+  if (position == NULL)
 diff -ruN --text a/Libraries/Save/Save.c b/Libraries/Save/Save.c
 --- a/Libraries/Save/Save.c	2026-10-24 11:39:09.290226498 +0100
 +++ b/Libraries/Save/Save.c	2026-10-24 13:00:56.008450981 +0100

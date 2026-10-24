@@ -21,7 +21,7 @@ typedef char byte;
 
 os_error *Pointer_GetPosition(wimp_point *position)
 {
- byte         box[5]={6};
+ unsigned char box[5]={6};   /* the bytes are unsigned (Norcroft char is) */
  os_error     *error = NULL;
 
  if (position == NULL)
