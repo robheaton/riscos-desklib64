@@ -1,6 +1,8 @@
 # DeskLib64 - Changelog
 
-## Unreleased
+## 0.2 (24 October 2026)
+
+Testing of most of the library: seventeen new test programs and applications (`tests/dialogs` to `tests/taskwindow`) and 13 fixes (MODIFICATIONS64.md C5 to C15, the translator fix and the font menu fix). `src/` is now 71 modified files and 1 added.
 
 * Fixed: a "no validation string" value (`-1`, stored as `0xffffffff` in a `dl_ptr`) was treated as a pointer in `Template_Clone`, `Template_Free`, `Menu_FullDispose` and `Icon_FindValidationStringCommand` (MODIFICATIONS64.md C5).
 * Fixed (translator): `LDM` with the base register in the register list loaded the base first and used the new value for the later loads. Affected `Sprite_UnRedirect`, `Wimp_ForceRedraw`, `Wimp_SetCaretPosition`, `Wimp_BlockCopy` and `PDriver_InsertIllustration` (MODIFICATIONS64.md section 3).
