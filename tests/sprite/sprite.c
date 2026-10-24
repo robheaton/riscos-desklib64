@@ -78,11 +78,11 @@ static void make_sprites (void)
   save = calloc (1, n + 16);
   must ("Redirect canvas", Sprite_Redirect (area, "canvas", save, &old));
   ColourTrans_SetGCOL (0xFFFFFF00, 0x100, 0);		/* white (0xBBGGRR00) */
-  GFX_Rectangle (0, 0, 64 * 2, 64 * 2);
-  ColourTrans_SetGCOL (0x00FF0000, 0x100, 0);		/* blue */
-  GFX_Rectangle (8, 8, 40, 40);
+  GFX_RectangleFill (0, 0, 64 * 2, 64 * 2);
+  ColourTrans_SetGCOL (0xFF000000, 0x100, 0);		/* blue */
+  GFX_RectangleFill (8, 8, 40, 40);
   ColourTrans_SetGCOL (0x0000FF00, 0x100, 0);		/* red */
-  GFX_Rectangle (56, 56, 40, 40);
+  GFX_RectangleFill (56, 56, 40, 40);
   must ("UnRedirect", Sprite_UnRedirect (&old));
   free (save);
   pt.x = 20; pt.y = 20;
@@ -91,7 +91,7 @@ static void make_sprites (void)
     Sprite_ReadPixel (area, "canvas", &pt, &colour, &tint);
     {
       FILE *f = fopen ("<Wimp$ScrapDir>.sprtest", "a");
-      if (f) { fprintf (f, "canvas pixel (20,20) after drawing with VDU calls into it = %06x\n", (unsigned) colour & 0xFFFFFF); fclose (f); }
+      if (f) { fprintf (f, "canvas pixel (20,20), inside the first (blue) filled square = %06x (BBGGRR: ff0000 expected)\n", (unsigned) colour & 0xFFFFFF); fclose (f); }
     }
   }
 }
@@ -113,7 +113,7 @@ static void draw (int ox, int oy)
   plots++; if (e) { if (!plot_errors++) snprintf (plot_error_text, sizeof plot_error_text, "plot %d: %.200s", plots, e->errmess); }
   p.x = ox + 340; p.y = oy - 110;
   sc.multiply.x = 1; sc.multiply.y = 1; sc.divide.x = 1; sc.divide.y = 1;
-  e = Sprite_PlotGrey (area, "grad", &p, &sc, NULL);		/* OS_SpriteOp 53: greyscale (not every SpriteExtend version supports it: an error here is not checked) */
+  e = Sprite_PlotGrey (area, "grad", &p, &sc, NULL);		/* OS_SpriteOp 53: greyscale (some SpriteExtend versions do not support it: the error is then expected) */
   plots++; if (e) { if (!plot_errors++) snprintf (plot_error_text, sizeof plot_error_text, "plot %d: %.200s", plots, e->errmess); }
   p.x = ox + 440; p.y = oy - 130;
   e = Sprite_Plot (area, "canvas", p.x, p.y, 0);
