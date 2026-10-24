@@ -4,7 +4,7 @@ set -e
 HERE=$(cd "$(dirname "$0")" && pwd); R=$HERE/..
 TC=${1:-${TC:?give the tool chain folder as the first argument or in TC}}
 CC=$TC/bin/aarch64-riscos-gcc
-A=$R/dist/apps; mkdir -p "$A/!DLHello" "$A/!DLDemo2" "$A/!DLDialogs" "$A/!DLSave" "$A/!DLSprite" "$A/!DLPane" "$A/!DLFont" "$A/!DLFont3" "$A/!DLDrag" "$A/!DLClip" "$A/!DLMenu2" "$A/!DLControls" "$A/!DLTaskWindow" "$A/!DLGaps" "$A/!DLGaps2"
+A=$R/dist/apps; mkdir -p "$A/!DLHello" "$A/!DLDemo2" "$A/!DLDialogs" "$A/!DLSave" "$A/!DLSprite" "$A/!DLPane" "$A/!DLFont" "$A/!DLFont3" "$A/!DLDrag" "$A/!DLClip" "$A/!DLMenu2" "$A/!DLControls" "$A/!DLTaskWindow" "$A/!DLGaps" "$A/!DLGaps2" "$A/!DLGaps3"
 FLAGS="-munixlib -O2 -fsigned-char -I $R/dist/include"
 $CC $FLAGS "$HERE/hello/hello.c" "$R/dist/lib/libDeskLib64.a" -o "$A/!DLHello/!RunImage,ff8"
 cp "$HERE/hello/!Run,feb" "$HERE/hello/!Boot,feb" "$A/!DLHello/"
@@ -30,5 +30,6 @@ cp "$HERE/controls/!Run,feb" "$HERE/controls/!Boot,feb" "$A/!DLControls/"; $CC $
 cp "$HERE/taskwindow/!Run,feb" "$HERE/taskwindow/!Boot,feb" "$A/!DLTaskWindow/"; $CC $FLAGS "$HERE/taskwindow/taskwindow.c" "$R/dist/lib/libDeskLib64.a" -o "$A/!DLTaskWindow/!RunImage,ff8"; $CC $FLAGS "$HERE/taskwindow/twecho.c" "$R/dist/lib/libDeskLib64.a" -o "$A/!DLTaskWindow/twecho,ff8"
 cp "$HERE/gaps/!Run,feb" "$HERE/gaps/!Boot,feb" "$A/!DLGaps/"; $CC $FLAGS "$HERE/gaps/gaps.c" "$R/dist/lib/libDeskLib64.a" -o "$A/!DLGaps/!RunImage,ff8"; python3 "$HERE/gaps/mktemplate.py" "$A/!DLGaps/Templates,fec"
 cp "$HERE/gaps2/!Run,feb" "$HERE/gaps2/!Boot,feb" "$A/!DLGaps2/"; $CC $FLAGS "$HERE/gaps2/gaps2.c" "$R/dist/lib/libDeskLib64.a" -o "$A/!DLGaps2/!RunImage,ff8"; python3 "$HERE/gaps2/mktemplate.py" "$A/!DLGaps2/Templates,fec"
+cp "$HERE/gaps3/!Run,feb" "$HERE/gaps3/!Boot,feb" "$HERE/gaps3/Msgs" "$A/!DLGaps3/"; $CC $FLAGS "$HERE/gaps3/gaps3.c" "$R/dist/lib/libDeskLib64.a" -o "$A/!DLGaps3/!RunImage,ff8"; python3 "$HERE/gaps3/mktemplate.py" "$A/!DLGaps3/Templates,fec"
 mkdir -p "$A/msgtest"; $CC $FLAGS "$HERE/msgs/msgtest.c" "$R/dist/lib/libDeskLib64.a" -o "$A/msgtest/msgtest,ff8"; cp "$HERE/msgs/Messages" "$A/msgtest/Messages,fff"; cp "$HERE/msgs/Msgs" "$A/msgtest/Msgs,fff"
-echo "built $A/!DLHello, !DLDemo2, !DLDialogs, !DLSave, !DLSprite, !DLPane, !DLFont, !DLFont3, !DLDrag, !DLClip, !DLMenu2, !DLControls, !DLTaskWindow, !DLGaps, !DLGaps2, spritetest,ff8, sprite2test,ff8, filetest,ff8, colourtest,ff8, cleartest,ff8, envtest,ff8, misctest,ff8 and msgtest/"
+echo "built $A/!DLHello, !DLDemo2, !DLDialogs, !DLSave, !DLSprite, !DLPane, !DLFont, !DLFont3, !DLDrag, !DLClip, !DLMenu2, !DLControls, !DLTaskWindow, !DLGaps, !DLGaps2, !DLGaps3, spritetest,ff8, sprite2test,ff8, filetest,ff8, colourtest,ff8, cleartest,ff8, envtest,ff8, misctest,ff8 and msgtest/"

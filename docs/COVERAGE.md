@@ -2,7 +2,7 @@
 
 Made by `tools/coverage.py`. A function is **called** if a test program calls it, and **reached** if a test calls it or a function that it calls does (so `Wimp_Poll`, which `Event_Poll` calls, counts). Reached means the test code can run it, not that its result was checked: `docs/STATUS.md` says what each test checks.
 
-**465 of 619 library functions are reached (399 are called directly).**
+**479 of 619 library functions are reached (412 are called directly).**
 
 | Module | Called | Reached | Total | Not reached |
 |---|---:|---:|---:|---|
@@ -18,23 +18,23 @@ Made by `tools/coverage.py`. A function is **called** if a test program calls it
 | Drag | 1 | 1 | 2 | SetHandlers |
 | Environment | 11 | 11 | 17 | LogInitialise, LogMessage, LogMessageWithName, SysBeep, TaskInfo, TaskNameFromHandle |
 | Error | 4 | 8 | 8 |  |
-| EventMsg | 2 | 4 | 6 | Release, ReleaseMessage |
+| EventMsg | 2 | 5 | 6 | ReleaseMessage |
 | Event | 5 | 8 | 9 | InitNested |
 | File | 24 | 24 | 24 |  |
 | Filing | 14 | 17 | 18 | ScanDirByDir |
 | Filter | 0 | 0 | 4 | DeRegisterPostFilter, DeRegisterPreFilter, RegisterPostFilter, RegisterPreFilter |
 | (no prefix) | 8 | 14 | 14 |  |
 | Font2 | 4 | 4 | 4 |  |
-| Font | 24 | 24 | 28 | Caret, FindCaret, FindCaretJ, SetScaleFactor |
+| Font | 27 | 27 | 28 | SetScaleFactor |
 | GFX | 1 | 1 | 11 | CLG, GetClip, ReadPoint, Rectangle, SetClip, SetColour, VDU, Wait, Write0, WriteN |
 | Handler | 7 | 9 | 10 | Key |
 | Hourglass | 5 | 5 | 5 |  |
-| Icon | 34 | 43 | 47 | BarIconUser, ButtonIsHeld, FindValidationStringCommand, StartDrag |
+| Icon | 37 | 46 | 47 | StartDrag |
 | Kbd | 2 | 2 | 3 | GET |
 | LinkList | 7 | 7 | 7 |  |
 | Mem | 4 | 4 | 8 | CheckHeap, Compact, MoveAnchor, Size |
 | Menu2 | 2 | 3 | 5 | CreateFromMsgs, DetachMenu |
-| Menu | 19 | 22 | 25 | PopUp, PopUpAuto, Warn |
+| Menu | 22 | 25 | 25 |  |
 | MessageTrans | 4 | 4 | 4 |  |
 | Module | 2 | 2 | 2 |  |
 | MsgTrans | 3 | 3 | 4 | ReportPS |
@@ -60,6 +60,6 @@ Made by `tools/coverage.py`. A function is **called** if a test program calls it
 | Tinct | 0 | 0 | 8 | AvailableFeatures, Compress, ConvertSprite, Decompress, Plot, PlotAlpha, PlotScaled, PlotScaledAlpha |
 | Url | 0 | 0 | 4 | AddHandler, Encode, Launch, RemoveHandler |
 | WimpMsg | 0 | 0 | 4 | Ack, GetTaskHandle, Reply, Send |
-| Wimp | 28 | 48 | 59 | CommandWindow, Enumerate, Poll, PollIdle, ReadPixTrans, ReportErrorR, SetMode, SetPalette, SetPointerShape, SpriteOp, TransferBlock |
-| Window | 15 | 17 | 20 | AutoHelp, HelpHandler, MoveWindow |
+| Wimp | 31 | 50 | 59 | CommandWindow, Poll, PollIdle, ReportErrorR, SetMode, SetPalette, SetPointerShape, SpriteOp, TransferBlock |
+| Window | 16 | 19 | 20 | MoveWindow |
 |  | 0 | 0 | 1 | _wassert |

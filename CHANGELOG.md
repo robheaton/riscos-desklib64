@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+* New test `tests/gaps3` (a desktop task, 27 checks): window help (`Window_AutoHelp` answering a help request that the test sends to its own task), `Menu_PopUp`, `PopUpAuto` and `Warn`, `Icon_BarIconUser`, `Icon_ButtonIsHeld`, `Icon_FindValidationStringCommand`, `Wimp_Enumerate`, `Wimp_ReadPixTrans` and `Font_FindCaret`, `FindCaretJ` and `Caret`. No library change was needed.
 * New test `tests/gaps2` (a desktop task, 50 checks): Pane2 (handles, numbers from 1, variables, flags, open, hide, delete), Pane (Link, SetFlags, Show, Hide, Delete), the Handler functions (called with events made by the test), Resource (automatic path, path, sprites, choices) and the rest of the Font functions. No library change was needed.
 * Fixed (also in DeskLib32): `Icon_SetText`, `Icon_SetTextRJ`, `Icon_GetInteger` and `Icon_GetDouble` treated an icon with direct text as an indirected one and used its text as an address (MODIFICATIONS64.md C17).
 * New test `tests/gaps` (a desktop task, 78 checks): Wimp window information calls, the Window functions, Template, the Icon colour, shade, selection and number functions, validation strings, `Icon_BarIcon`, and the Menu builders.
