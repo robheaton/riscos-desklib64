@@ -38,6 +38,7 @@ static void Clipboard_Init(void) {
 void Clipboard_Claim(BOOL Selection, BOOL Clipboard) {
   message_block message;
 
+  memset(&message, 0, sizeof(message));  /* the flag bits above the three used ones were stack garbage */
   message.header.size      = 24;
   message.header.yourref   = 0;
   message.header.action    = message_CLAIMENTITY;
@@ -75,7 +76,7 @@ void Clipboard_Request(window_handle window, unsigned int internal, BOOL send,
   }
   *filetype = -1;
 
-  message.header.size = 44 + num;
+  message.header.size = 44 + 4 * num;   /* header 20 + 5 words + one word per file type + the -1 (was 44 + num: not a multiple of 4, so the Wimp refused it) */
 
   Wimp_SendMessage(event_SEND, &message, 0, 0);
 }

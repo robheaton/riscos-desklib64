@@ -24,11 +24,14 @@ All of DeskLib's C (about 270 files) and 259 veneers: 506 objects in `libDeskLib
 
 * **`clear`** (command line, 20 checks): `Mem_Initialise`, `Mem_Alloc`, `Mem_MidExtend` and `Mem_Free` (the `Mem` replacement on `malloc`), and the `Clear` library: `Clear_Init`, `Clear_Create`, `Clear_Save`, `Clear_Load` and `Clear_Free` for 8 and 24 bits per pixel pictures, with the file written and read back and compared.
 
+* **`clip`** (two tasks from one application): `Clipboard_Claim` and `Clipboard_Request`, received by the other task (the message sizes, the flags, the window and internal handles and the file types), and the same messages sent directly with `Wimp_SendMessage`. The data transfer that follows a request (`Clipboard`'s paste handler) is not implemented by the library and is not tested.
+* **`drag`** (a window with a sprite icon): `DragASprite_DragIcon` (reads the window and icon state, starts the drag with the DragASprite module), `DragASprite_Start` with explicit arguments and `DragASprite_Stop`, and the `user drag ended` event.
+
 ## Known problems
 * The older `Dialog` library (`Dialog_WaitForClick`) does not return in testing: the task stops receiving events. It has not been explained yet. `Dialog2` is not affected and is the one to use.
 
 ## Not run yet
-`DragASpr`, `Print` and `PDriver`, `Clipboard`, `Url`, `Tinct`, `Serial`. They compile, the veneers were translated or written from the assembler, and the structures have the OS layout, but nobody has run them. If something fails, please open an issue with the function and what happened.
+`Print` and `PDriver`, `Url`, `Tinct`, `Serial`. They compile, the veneers were translated or written from the assembler, and the structures have the OS layout, but nobody has run them. If something fails, please open an issue with the function and what happened.
 
 ## Known limits
 * Arguments after the fourth to the translated veneers and structures passed by value are assumed to fit a 32-bit word (see docs/PORTING.md).

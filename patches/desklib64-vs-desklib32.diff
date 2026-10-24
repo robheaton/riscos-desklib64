@@ -1,6 +1,6 @@
 diff -ruN --text a/include/Core.h b/include/Core.h
---- a/include/Core.h	2026-10-24 15:31:27.250081358 +0100
-+++ b/include/Core.h	2026-10-24 15:31:27.261042274 +0100
+--- a/include/Core.h	2026-10-24 15:55:27.725119280 +0100
++++ b/include/Core.h	2026-10-24 15:55:27.736576030 +0100
 @@ -26,6 +26,15 @@
  
  #include <stddef.h>
@@ -19,7 +19,7 @@ diff -ruN --text a/include/Core.h b/include/Core.h
  extern "C" {
 diff -ruN --text a/include/dl64.h b/include/dl64.h
 --- a/include/dl64.h	1970-01-01 01:00:00.000000000 +0100
-+++ b/include/dl64.h	2026-10-24 15:31:27.261746195 +0100
++++ b/include/dl64.h	2026-10-24 15:55:27.737290552 +0100
 @@ -0,0 +1,64 @@
 +/* dl64.h: what the generated SWI veneers (tools/armv2c.py) need: the SWI call and DeskLib's types (not PCI.h, USB.h, BackTrace.h and Debug.h: hardware or Norcroft specific) */
 +#ifndef DL64_H
@@ -86,8 +86,8 @@ diff -ruN --text a/include/dl64.h b/include/dl64.h
 +#define DL_ARG(x) ({ __typeof__ (x) dl_v = (x); uint64_t dl_r = 0; _Static_assert (sizeof dl_v <= 8, "argument too big"); __builtin_memcpy (&dl_r, &dl_v, sizeof dl_v); dl_r; })
 +#endif
 diff -ruN --text a/include/Font.h b/include/Font.h
---- a/include/Font.h	2026-10-24 15:31:27.250226155 +0100
-+++ b/include/Font.h	2026-10-24 15:31:27.261197436 +0100
+--- a/include/Font.h	2026-10-24 15:55:27.725289212 +0100
++++ b/include/Font.h	2026-10-24 15:55:27.736736908 +0100
 @@ -88,7 +88,7 @@
  
  typedef struct
@@ -98,8 +98,8 @@ diff -ruN --text a/include/Font.h b/include/Font.h
    int y;                /* in/out, in 1/72000s of an inch */
    int split;            /* in/out: space char, or -1      */
 diff -ruN --text a/include/Menu2.h b/include/Menu2.h
---- a/include/Menu2.h	2026-10-24 15:31:27.250367297 +0100
-+++ b/include/Menu2.h	2026-10-24 15:31:27.261358299 +0100
+--- a/include/Menu2.h	2026-10-24 15:55:27.725458452 +0100
++++ b/include/Menu2.h	2026-10-24 15:55:27.736900968 +0100
 @@ -46,7 +46,7 @@
  */
  
@@ -110,8 +110,8 @@ diff -ruN --text a/include/Menu2.h b/include/Menu2.h
    This is used to identify a Menu2 menu,
  */
 diff -ruN --text a/include/PCI.h b/include/PCI.h
---- a/include/PCI.h	2026-10-24 15:31:27.250417504 +0100
-+++ b/include/PCI.h	2026-10-24 15:31:27.261408782 +0100
+--- a/include/PCI.h	2026-10-24 15:55:27.725520312 +0100
++++ b/include/PCI.h	2026-10-24 15:55:27.736947209 +0100
 @@ -55,7 +55,7 @@
  typedef struct {
    pci_aflags    flags;     /* Input values */
@@ -122,8 +122,8 @@ diff -ruN --text a/include/PCI.h b/include/PCI.h
    unsigned int  size;
    void         *laddress;
 diff -ruN --text a/include/PDriver.h b/include/PDriver.h
---- a/include/PDriver.h	2026-10-24 15:31:27.250431092 +0100
-+++ b/include/PDriver.h	2026-10-24 15:31:27.261420613 +0100
+--- a/include/PDriver.h	2026-10-24 15:55:27.725533345 +0100
++++ b/include/PDriver.h	2026-10-24 15:55:27.736958954 +0100
 @@ -209,7 +209,7 @@
    int              drivertype : 16;
    wimp_point       resolution;
@@ -134,8 +134,8 @@ diff -ruN --text a/include/PDriver.h b/include/PDriver.h
    int              id_number;
  } printer_info;
 diff -ruN --text a/include/Print.h b/include/Print.h
---- a/include/Print.h	2026-10-24 15:31:27.250476666 +0100
-+++ b/include/Print.h	2026-10-24 15:31:27.261469106 +0100
+--- a/include/Print.h	2026-10-24 15:55:27.725587238 +0100
++++ b/include/Print.h	2026-10-24 15:55:27.737011748 +0100
 @@ -89,7 +89,7 @@
  */
  
@@ -146,8 +146,8 @@ diff -ruN --text a/include/Print.h b/include/Print.h
    This type is passed to the result function to report the outcome of the
    attempt to print.
 diff -ruN --text a/include/Screen.h b/include/Screen.h
---- a/include/Screen.h	2026-10-24 15:31:27.250529549 +0100
-+++ b/include/Screen.h	2026-10-24 15:31:27.261529005 +0100
+--- a/include/Screen.h	2026-10-24 15:55:27.725653646 +0100
++++ b/include/Screen.h	2026-10-24 15:55:27.737065020 +0100
 @@ -104,7 +104,7 @@
  typedef union {
    unsigned int       screen_mode;
@@ -158,8 +158,8 @@ diff -ruN --text a/include/Screen.h b/include/Screen.h
  
  
 diff -ruN --text a/include/Sprite.h b/include/Sprite.h
---- a/include/Sprite.h	2026-10-24 15:31:27.250563446 +0100
-+++ b/include/Sprite.h	2026-10-24 15:31:27.261567543 +0100
+--- a/include/Sprite.h	2026-10-24 15:55:27.725695276 +0100
++++ b/include/Sprite.h	2026-10-24 15:55:27.737108480 +0100
 @@ -108,11 +108,11 @@
  typedef struct
  {
@@ -176,8 +176,8 @@ diff -ruN --text a/include/Sprite.h b/include/Sprite.h
  /*
    This is used to store the VDU state so that when you redirect VDU output
 diff -ruN --text a/include/Wimp.h b/include/Wimp.h
---- a/include/Wimp.h	2026-10-24 15:31:27.250667117 +0100
-+++ b/include/Wimp.h	2026-10-24 15:31:27.261679166 +0100
+--- a/include/Wimp.h	2026-10-24 15:55:27.725817302 +0100
++++ b/include/Wimp.h	2026-10-24 15:55:27.737222409 +0100
 @@ -382,8 +382,8 @@
  
  typedef struct
@@ -263,8 +263,8 @@ diff -ruN --text a/include/Wimp.h b/include/Wimp.h
  } template_block;
  /*
 diff -ruN --text a/Libraries/Clear/Load.c b/Libraries/Clear/Load.c
---- a/Libraries/Clear/Load.c	2026-10-24 15:31:27.240597498 +0100
-+++ b/Libraries/Clear/Load.c	2026-10-24 15:31:27.252670168 +0100
+--- a/Libraries/Clear/Load.c	2026-10-24 15:55:27.715385206 +0100
++++ b/Libraries/Clear/Load.c	2026-10-24 15:55:27.728404458 +0100
 @@ -61,11 +61,11 @@
    if((temp = malloc(sizeof(clear_picture) + creator_length)) == NULL)
      return Clear__AbortLoad(in, temp);
@@ -279,9 +279,29 @@ diff -ruN --text a/Libraries/Clear/Load.c b/Libraries/Clear/Load.c
      return Clear__AbortLoad(in, temp);
  
    temp->creatorversion = File_Read32(in);
+diff -ruN --text a/Libraries/Clipboard/Clipboard.c b/Libraries/Clipboard/Clipboard.c
+--- a/Libraries/Clipboard/Clipboard.c	2026-10-24 15:55:27.715480215 +0100
++++ b/Libraries/Clipboard/Clipboard.c	2026-10-24 15:55:27.728468319 +0100
+@@ -38,6 +38,7 @@
+ void Clipboard_Claim(BOOL Selection, BOOL Clipboard) {
+   message_block message;
+ 
++  memset(&message, 0, sizeof(message));  /* the flag bits above the three used ones were stack garbage */
+   message.header.size      = 24;
+   message.header.yourref   = 0;
+   message.header.action    = message_CLAIMENTITY;
+@@ -75,7 +76,7 @@
+   }
+   *filetype = -1;
+ 
+-  message.header.size = 44 + num;
++  message.header.size = 44 + 4 * num;   /* header 20 + 5 words + one word per file type + the -1 (was 44 + num: not a multiple of 4, so the Wimp refused it) */
+ 
+   Wimp_SendMessage(event_SEND, &message, 0, 0);
+ }
 diff -ruN --text a/Libraries/Dialog/ShowAt.c b/Libraries/Dialog/ShowAt.c
---- a/Libraries/Dialog/ShowAt.c	2026-10-24 15:31:27.241413729 +0100
-+++ b/Libraries/Dialog/ShowAt.c	2026-10-24 15:31:27.253570070 +0100
+--- a/Libraries/Dialog/ShowAt.c	2026-10-24 15:55:27.716450438 +0100
++++ b/Libraries/Dialog/ShowAt.c	2026-10-24 15:55:27.729247689 +0100
 @@ -26,6 +26,6 @@
  extern void Dialog_ShowAt( dialog dbox, int x, int y )
  {
@@ -291,8 +311,8 @@ diff -ruN --text a/Libraries/Dialog/ShowAt.c b/Libraries/Dialog/ShowAt.c
    dbox->state.stillopen = TRUE;
  }
 diff -ruN --text a/Libraries/Dialog/Show.c b/Libraries/Dialog/Show.c
---- a/Libraries/Dialog/Show.c	2026-10-24 15:31:27.241394212 +0100
-+++ b/Libraries/Dialog/Show.c	2026-10-24 15:31:27.253550877 +0100
+--- a/Libraries/Dialog/Show.c	2026-10-24 15:55:27.716431576 +0100
++++ b/Libraries/Dialog/Show.c	2026-10-24 15:55:27.729229560 +0100
 @@ -43,7 +43,7 @@
     */
    pos.x = (screen_size.x - win_size.x) / 2;
@@ -303,8 +323,8 @@ diff -ruN --text a/Libraries/Dialog/Show.c b/Libraries/Dialog/Show.c
    dbox->state.stillopen = TRUE;
  }
 diff -ruN --text a/Libraries/Dialog2/OpenLeaf.c b/Libraries/Dialog2/OpenLeaf.c
---- a/Libraries/Dialog2/OpenLeaf.c	2026-10-24 15:31:27.241598109 +0100
-+++ b/Libraries/Dialog2/OpenLeaf.c	2026-10-24 15:31:27.253764484 +0100
+--- a/Libraries/Dialog2/OpenLeaf.c	2026-10-24 15:55:27.716642345 +0100
++++ b/Libraries/Dialog2/OpenLeaf.c	2026-10-24 15:55:27.729436067 +0100
 @@ -31,7 +31,7 @@
  Dialog2__CommonOpenCode( dialog2);
  
@@ -315,8 +335,8 @@ diff -ruN --text a/Libraries/Dialog2/OpenLeaf.c b/Libraries/Dialog2/OpenLeaf.c
  	event->data.message.data.words[2]
  	);
 diff -ruN --text a/Libraries/Dialog2/OpenMenu.c b/Libraries/Dialog2/OpenMenu.c
---- a/Libraries/Dialog2/OpenMenu.c	2026-10-24 15:31:27.241616010 +0100
-+++ b/Libraries/Dialog2/OpenMenu.c	2026-10-24 15:31:27.253783631 +0100
+--- a/Libraries/Dialog2/OpenMenu.c	2026-10-24 15:55:27.716660714 +0100
++++ b/Libraries/Dialog2/OpenMenu.c	2026-10-24 15:55:27.729462593 +0100
 @@ -35,7 +35,7 @@
  
  Dialog2_Window_GetWindowOpenPos( &pos, openpos, dialog2->window);
@@ -327,8 +347,8 @@ diff -ruN --text a/Libraries/Dialog2/OpenMenu.c b/Libraries/Dialog2/OpenMenu.c
  return NOERROR;
  }
 diff -ruN --text a/Libraries/File/LoadTo.c b/Libraries/File/LoadTo.c
---- a/Libraries/File/LoadTo.c	2026-10-24 15:31:27.242548998 +0100
-+++ b/Libraries/File/LoadTo.c	2026-10-24 15:31:27.254706610 +0100
+--- a/Libraries/File/LoadTo.c	2026-10-24 15:55:27.717588895 +0100
++++ b/Libraries/File/LoadTo.c	2026-10-24 15:55:27.730375086 +0100
 @@ -33,8 +33,8 @@
    _kernel_oserror  *error;
  
@@ -341,8 +361,8 @@ diff -ruN --text a/Libraries/File/LoadTo.c b/Libraries/File/LoadTo.c
  
    error = _kernel_swi( SWI_OS_File, &r, &r );
 diff -ruN --text a/Libraries/Filing/Filenames.c b/Libraries/Filing/Filenames.c
---- a/Libraries/Filing/Filenames.c	2026-10-24 15:31:27.242737051 +0100
-+++ b/Libraries/Filing/Filenames.c	2026-10-24 15:31:27.254860358 +0100
+--- a/Libraries/Filing/Filenames.c	2026-10-24 15:55:27.717778107 +0100
++++ b/Libraries/Filing/Filenames.c	2026-10-24 15:55:27.730574734 +0100
 @@ -54,7 +54,7 @@
     return NULL;
   else {
@@ -353,8 +373,8 @@ diff -ruN --text a/Libraries/Filing/Filenames.c b/Libraries/Filing/Filenames.c
  }
  
 diff -ruN --text a/Libraries/Filing/ReadDir.c b/Libraries/Filing/ReadDir.c
---- a/Libraries/Filing/ReadDir.c	2026-10-24 15:31:27.242833997 +0100
-+++ b/Libraries/Filing/ReadDir.c	2026-10-24 15:31:27.254957410 +0100
+--- a/Libraries/Filing/ReadDir.c	2026-10-24 15:55:27.717873319 +0100
++++ b/Libraries/Filing/ReadDir.c	2026-10-24 15:55:27.730629819 +0100
 @@ -68,8 +68,7 @@
   dirdata->dirname=MALLOC(strlen(dirname)+1);
   if (dirdata->dirname==NULL)
@@ -381,8 +401,8 @@ diff -ruN --text a/Libraries/Filing/ReadDir.c b/Libraries/Filing/ReadDir.c
        break;
       case readdirtype_NAMEONLY:
 diff -ruN --text a/Libraries/Filing/ScanDir.c b/Libraries/Filing/ScanDir.c
---- a/Libraries/Filing/ScanDir.c	2026-10-24 15:31:27.242855906 +0100
-+++ b/Libraries/Filing/ScanDir.c	2026-10-24 15:31:27.254975574 +0100
+--- a/Libraries/Filing/ScanDir.c	2026-10-24 15:55:27.718006437 +0100
++++ b/Libraries/Filing/ScanDir.c	2026-10-24 15:55:27.730643216 +0100
 @@ -57,7 +57,7 @@
       actptr=(filing_fulldirentry *)(void *)direntries;
     }
@@ -393,8 +413,8 @@ diff -ruN --text a/Libraries/Filing/ScanDir.c b/Libraries/Filing/ScanDir.c
     readnum--;
  
 diff -ruN --text a/Libraries/Filing/ScanDirDir.c b/Libraries/Filing/ScanDirDir.c
---- a/Libraries/Filing/ScanDirDir.c	2026-10-24 15:31:27.242894104 +0100
-+++ b/Libraries/Filing/ScanDirDir.c	2026-10-24 15:31:27.254990891 +0100
+--- a/Libraries/Filing/ScanDirDir.c	2026-10-24 15:55:27.718027633 +0100
++++ b/Libraries/Filing/ScanDirDir.c	2026-10-24 15:55:27.730654273 +0100
 @@ -58,7 +58,7 @@
       actptr = (filing_fulldirentry *)(void *)direntries;
     }
@@ -414,8 +434,8 @@ diff -ruN --text a/Libraries/Filing/ScanDirDir.c b/Libraries/Filing/ScanDirDir.c
     readnum--;
  
 diff -ruN --text a/Libraries/Icon/AlterValid.c b/Libraries/Icon/AlterValid.c
---- a/Libraries/Icon/AlterValid.c	2026-10-24 15:31:27.244578776 +0100
-+++ b/Libraries/Icon/AlterValid.c	2026-10-24 15:31:27.256263753 +0100
+--- a/Libraries/Icon/AlterValid.c	2026-10-24 15:55:27.718830283 +0100
++++ b/Libraries/Icon/AlterValid.c	2026-10-24 15:55:27.731616940 +0100
 @@ -38,21 +38,21 @@
    else
    {
@@ -442,8 +462,8 @@ diff -ruN --text a/Libraries/Icon/AlterValid.c b/Libraries/Icon/AlterValid.c
      Wimp_SetIconState(window, icon, 0, 0);
    }
 diff -ruN --text a/Libraries/Icon/BarIconUse.c b/Libraries/Icon/BarIconUse.c
---- a/Libraries/Icon/BarIconUse.c	2026-10-24 15:31:27.244620875 +0100
-+++ b/Libraries/Icon/BarIconUse.c	2026-10-24 15:31:27.256298935 +0100
+--- a/Libraries/Icon/BarIconUse.c	2026-10-24 15:55:27.718851086 +0100
++++ b/Libraries/Icon/BarIconUse.c	2026-10-24 15:55:27.731642335 +0100
 @@ -50,8 +50,8 @@
    strncpy(iconname,spritename,wimp_MAXNAME);
    iconname[wimp_MAXNAME] = '\0';
@@ -456,8 +476,8 @@ diff -ruN --text a/Libraries/Icon/BarIconUse.c b/Libraries/Icon/BarIconUse.c
  
    icreate.icondata.workarearect.min.x =
 diff -ruN --text a/Libraries/Icon/DisposeInd.c b/Libraries/Icon/DisposeInd.c
---- a/Libraries/Icon/DisposeInd.c	2026-10-24 15:31:27.244694021 +0100
-+++ b/Libraries/Icon/DisposeInd.c	2026-10-24 15:31:27.256342677 +0100
+--- a/Libraries/Icon/DisposeInd.c	2026-10-24 15:55:27.719034518 +0100
++++ b/Libraries/Icon/DisposeInd.c	2026-10-24 15:55:27.731685712 +0100
 @@ -30,17 +30,17 @@
    if (!flags.data.text && flags.data.sprite)             /* Sprite only icon */
    {
@@ -482,8 +502,8 @@ diff -ruN --text a/Libraries/Icon/DisposeInd.c b/Libraries/Icon/DisposeInd.c
    }
  }
 diff -ruN --text a/Libraries/Icon/FileIcon.c b/Libraries/Icon/FileIcon.c
---- a/Libraries/Icon/FileIcon.c	2026-10-24 15:31:27.244712940 +0100
-+++ b/Libraries/Icon/FileIcon.c	2026-10-24 15:31:27.256357356 +0100
+--- a/Libraries/Icon/FileIcon.c	2026-10-24 15:55:27.719081648 +0100
++++ b/Libraries/Icon/FileIcon.c	2026-10-24 15:55:27.731701794 +0100
 @@ -40,12 +40,12 @@
    Wimp_DeleteIcon(window, icon);
  
@@ -500,8 +520,8 @@ diff -ruN --text a/Libraries/Icon/FileIcon.c b/Libraries/Icon/FileIcon.c
    /* Fill in sprite name length */
    iconcreate.icondata.data.indirectsprite.nameisname = 8; /* file_xxx */
 diff -ruN --text a/Libraries/Icon/GetBgCol.c b/Libraries/Icon/GetBgCol.c
---- a/Libraries/Icon/GetBgCol.c	2026-10-24 15:31:27.244750539 +0100
-+++ b/Libraries/Icon/GetBgCol.c	2026-10-24 15:31:27.256378406 +0100
+--- a/Libraries/Icon/GetBgCol.c	2026-10-24 15:55:27.719185376 +0100
++++ b/Libraries/Icon/GetBgCol.c	2026-10-24 15:55:27.731725588 +0100
 @@ -28,7 +28,7 @@
      return icon->flags.data.background;
  
@@ -521,8 +541,8 @@ diff -ruN --text a/Libraries/Icon/GetBgCol.c b/Libraries/Icon/GetBgCol.c
    /* Limit to legal value */
    if (colour == -1)
 diff -ruN --text a/Libraries/Icon/GetDouble.c b/Libraries/Icon/GetDouble.c
---- a/Libraries/Icon/GetDouble.c	2026-10-24 15:31:27.244768719 +0100
-+++ b/Libraries/Icon/GetDouble.c	2026-10-24 15:31:27.256389830 +0100
+--- a/Libraries/Icon/GetDouble.c	2026-10-24 15:55:27.719235431 +0100
++++ b/Libraries/Icon/GetDouble.c	2026-10-24 15:55:27.731736918 +0100
 @@ -16,7 +16,7 @@
  
    Wimp_GetIconState(w, i, &istate);
@@ -533,8 +553,8 @@ diff -ruN --text a/Libraries/Icon/GetDouble.c b/Libraries/Icon/GetDouble.c
    return(0);
  }
 diff -ruN --text a/Libraries/Icon/GetFgCol.c b/Libraries/Icon/GetFgCol.c
---- a/Libraries/Icon/GetFgCol.c	2026-10-24 15:31:27.244787288 +0100
-+++ b/Libraries/Icon/GetFgCol.c	2026-10-24 15:31:27.256400725 +0100
+--- a/Libraries/Icon/GetFgCol.c	2026-10-24 15:55:27.719248632 +0100
++++ b/Libraries/Icon/GetFgCol.c	2026-10-24 15:55:27.731749115 +0100
 @@ -29,7 +29,7 @@
      return icon->flags.data.foreground;
  
@@ -554,8 +574,8 @@ diff -ruN --text a/Libraries/Icon/GetFgCol.c b/Libraries/Icon/GetFgCol.c
    /* Limit to legal value */
    if (colour == -1)
 diff -ruN --text a/Libraries/Icon/GetInteger.c b/Libraries/Icon/GetInteger.c
---- a/Libraries/Icon/GetInteger.c	2026-10-24 15:31:27.244805649 +0100
-+++ b/Libraries/Icon/GetInteger.c	2026-10-24 15:31:27.256411727 +0100
+--- a/Libraries/Icon/GetInteger.c	2026-10-24 15:55:27.719258135 +0100
++++ b/Libraries/Icon/GetInteger.c	2026-10-24 15:55:27.731762811 +0100
 @@ -16,7 +16,7 @@
  
    Wimp_GetIconState(w, i, &istate);
@@ -566,8 +586,8 @@ diff -ruN --text a/Libraries/Icon/GetInteger.c b/Libraries/Icon/GetInteger.c
    return(0);
  }
 diff -ruN --text a/Libraries/Icon/GetText.c b/Libraries/Icon/GetText.c
---- a/Libraries/Icon/GetText.c	2026-10-24 15:31:27.244869651 +0100
-+++ b/Libraries/Icon/GetText.c	2026-10-24 15:31:27.256447915 +0100
+--- a/Libraries/Icon/GetText.c	2026-10-24 15:55:27.719286194 +0100
++++ b/Libraries/Icon/GetText.c	2026-10-24 15:55:27.731798962 +0100
 @@ -40,10 +40,10 @@
    if (istate.flags.data.indirected)
    {
@@ -582,8 +602,8 @@ diff -ruN --text a/Libraries/Icon/GetText.c b/Libraries/Icon/GetText.c
      }
    }
 diff -ruN --text a/Libraries/Icon/GetTextPtr.c b/Libraries/Icon/GetTextPtr.c
---- a/Libraries/Icon/GetTextPtr.c	2026-10-24 15:31:27.244889594 +0100
-+++ b/Libraries/Icon/GetTextPtr.c	2026-10-24 15:31:27.256459258 +0100
+--- a/Libraries/Icon/GetTextPtr.c	2026-10-24 15:55:27.719295007 +0100
++++ b/Libraries/Icon/GetTextPtr.c	2026-10-24 15:55:27.731810463 +0100
 @@ -30,7 +30,7 @@
  
    if (iconblk.flags.value & icon_INDIRECTED)
@@ -594,8 +614,8 @@ diff -ruN --text a/Libraries/Icon/GetTextPtr.c b/Libraries/Icon/GetTextPtr.c
  
    return NULL;
 diff -ruN --text a/Libraries/Icon/printf.c b/Libraries/Icon/printf.c
---- a/Libraries/Icon/printf.c	2026-10-24 15:31:27.245373109 +0100
-+++ b/Libraries/Icon/printf.c	2026-10-24 15:31:27.256758364 +0100
+--- a/Libraries/Icon/printf.c	2026-10-24 15:55:27.719529549 +0100
++++ b/Libraries/Icon/printf.c	2026-10-24 15:55:27.732119622 +0100
 @@ -44,9 +44,9 @@
  
    va_start(argp,format);
@@ -618,8 +638,8 @@ diff -ruN --text a/Libraries/Icon/printf.c b/Libraries/Icon/printf.c
      {
        caret.index = len;
 diff -ruN --text a/Libraries/Icon/SetCaret.c b/Libraries/Icon/SetCaret.c
---- a/Libraries/Icon/SetCaret.c	2026-10-24 15:31:27.245027589 +0100
-+++ b/Libraries/Icon/SetCaret.c	2026-10-24 15:31:27.256539918 +0100
+--- a/Libraries/Icon/SetCaret.c	2026-10-24 15:55:27.719364874 +0100
++++ b/Libraries/Icon/SetCaret.c	2026-10-24 15:55:27.731903992 +0100
 @@ -29,7 +29,7 @@
      if (istate.flags.data.indirected)
      {
@@ -630,8 +650,8 @@ diff -ruN --text a/Libraries/Icon/SetCaret.c b/Libraries/Icon/SetCaret.c
      else
      {
 diff -ruN --text a/Libraries/Icon/SetText.c b/Libraries/Icon/SetText.c
---- a/Libraries/Icon/SetText.c	2026-10-24 15:31:27.245183163 +0100
-+++ b/Libraries/Icon/SetText.c	2026-10-24 15:31:27.256636689 +0100
+--- a/Libraries/Icon/SetText.c	2026-10-24 15:55:27.719440365 +0100
++++ b/Libraries/Icon/SetText.c	2026-10-24 15:55:27.731997044 +0100
 @@ -42,15 +42,15 @@
    if (istate.flags.value & (icon_TEXT | icon_INDIRECTED))
    {
@@ -652,8 +672,8 @@ diff -ruN --text a/Libraries/Icon/SetText.c b/Libraries/Icon/SetText.c
        {
          caret.index = len;
 diff -ruN --text a/Libraries/Icon/SetTextRJ.c b/Libraries/Icon/SetTextRJ.c
---- a/Libraries/Icon/SetTextRJ.c	2026-10-24 15:31:27.245202429 +0100
-+++ b/Libraries/Icon/SetTextRJ.c	2026-10-24 15:31:27.256648201 +0100
+--- a/Libraries/Icon/SetTextRJ.c	2026-10-24 15:55:27.719449969 +0100
++++ b/Libraries/Icon/SetTextRJ.c	2026-10-24 15:55:27.732008068 +0100
 @@ -33,7 +33,7 @@
       */
      register int  textlength = strlen(text) + 1 ;
@@ -673,8 +693,8 @@ diff -ruN --text a/Libraries/Icon/SetTextRJ.c b/Libraries/Icon/SetTextRJ.c
        {
          caret.index = len;
 diff -ruN --text a/Libraries/Icon/Validation.c b/Libraries/Icon/Validation.c
---- a/Libraries/Icon/Validation.c	2026-10-24 15:31:27.245333046 +0100
-+++ b/Libraries/Icon/Validation.c	2026-10-24 15:31:27.256734550 +0100
+--- a/Libraries/Icon/Validation.c	2026-10-24 15:55:27.719510057 +0100
++++ b/Libraries/Icon/Validation.c	2026-10-24 15:55:27.732095408 +0100
 @@ -29,7 +29,7 @@
  {
    int index;
@@ -685,8 +705,8 @@ diff -ruN --text a/Libraries/Icon/Validation.c b/Libraries/Icon/Validation.c
  
    tag = tag & 255;
 diff -ruN --text a/Libraries/Menu/AddSubMenu.c b/Libraries/Menu/AddSubMenu.c
---- a/Libraries/Menu/AddSubMenu.c	2026-10-24 15:31:27.245904277 +0100
-+++ b/Libraries/Menu/AddSubMenu.c	2026-10-24 15:31:27.257121448 +0100
+--- a/Libraries/Menu/AddSubMenu.c	2026-10-24 15:55:27.719839401 +0100
++++ b/Libraries/Menu/AddSubMenu.c	2026-10-24 15:55:27.732441391 +0100
 @@ -20,7 +20,7 @@
  
  void Menu_AddSubMenu(menu_ptr menu, int entry, menu_ptr submenu)
@@ -698,8 +718,8 @@ diff -ruN --text a/Libraries/Menu/AddSubMenu.c b/Libraries/Menu/AddSubMenu.c
 +  item[entry].submenu.menu = DL_PTR (submenu);
  }
 diff -ruN --text a/Libraries/Menu/AddSubWin.c b/Libraries/Menu/AddSubWin.c
---- a/Libraries/Menu/AddSubWin.c	2026-10-24 15:31:27.245919907 +0100
-+++ b/Libraries/Menu/AddSubWin.c	2026-10-24 15:31:27.257142326 +0100
+--- a/Libraries/Menu/AddSubWin.c	2026-10-24 15:55:27.719850483 +0100
++++ b/Libraries/Menu/AddSubWin.c	2026-10-24 15:55:27.732452469 +0100
 @@ -20,7 +20,7 @@
  
  void Menu_AddSubWindow(menu_ptr menu, int entry, window_handle window)
@@ -710,8 +730,8 @@ diff -ruN --text a/Libraries/Menu/AddSubWin.c b/Libraries/Menu/AddSubWin.c
    item[entry].submenu.window = window;
  }
 diff -ruN --text a/Libraries/Menu/Colourmenu.c b/Libraries/Menu/Colourmenu.c
---- a/Libraries/Menu/Colourmenu.c	2026-10-24 15:31:27.245932449 +0100
-+++ b/Libraries/Menu/Colourmenu.c	2026-10-24 15:31:27.257153156 +0100
+--- a/Libraries/Menu/Colourmenu.c	2026-10-24 15:55:27.719859609 +0100
++++ b/Libraries/Menu/Colourmenu.c	2026-10-24 15:55:27.732463269 +0100
 @@ -30,82 +30,82 @@
  
    menu = Menu_New(name, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15");
@@ -812,8 +832,8 @@ diff -ruN --text a/Libraries/Menu/Colourmenu.c b/Libraries/Menu/Colourmenu.c
    item->iconflags.data.foreground = colour_BLACK;
    item->iconflags.data.background = colour_LIGHT_BLUE;
 diff -ruN --text a/Libraries/Menu/Extend.c b/Libraries/Menu/Extend.c
---- a/Libraries/Menu/Extend.c	2026-10-24 15:31:27.245946234 +0100
-+++ b/Libraries/Menu/Extend.c	2026-10-24 15:31:27.257163712 +0100
+--- a/Libraries/Menu/Extend.c	2026-10-24 15:55:27.719872869 +0100
++++ b/Libraries/Menu/Extend.c	2026-10-24 15:55:27.732472036 +0100
 @@ -29,7 +29,7 @@
    menu_ptr  newmenu;
    unsigned int   maxwidth = 0;
@@ -836,8 +856,8 @@ diff -ruN --text a/Libraries/Menu/Extend.c b/Libraries/Menu/Extend.c
  
    if (!Menu__Create(&item[lastitem + 1], description, newitems))
 diff -ruN --text a/Libraries/Menu/FullDispos.c b/Libraries/Menu/FullDispos.c
---- a/Libraries/Menu/FullDispos.c	2026-10-24 15:31:27.245980511 +0100
-+++ b/Libraries/Menu/FullDispos.c	2026-10-24 15:31:27.257187415 +0100
+--- a/Libraries/Menu/FullDispos.c	2026-10-24 15:55:27.719892742 +0100
++++ b/Libraries/Menu/FullDispos.c	2026-10-24 15:55:27.732490436 +0100
 @@ -18,7 +18,7 @@
  
  #include "DeskLib:Menu.h"
@@ -871,8 +891,8 @@ diff -ruN --text a/Libraries/Menu/FullDispos.c b/Libraries/Menu/FullDispos.c
  
      if (items[index].menuflags.data.last)
 diff -ruN --text a/Libraries/Menu/GetFlags.c b/Libraries/Menu/GetFlags.c
---- a/Libraries/Menu/GetFlags.c	2026-10-24 15:31:27.245993482 +0100
-+++ b/Libraries/Menu/GetFlags.c	2026-10-24 15:31:27.257197768 +0100
+--- a/Libraries/Menu/GetFlags.c	2026-10-24 15:55:27.719902204 +0100
++++ b/Libraries/Menu/GetFlags.c	2026-10-24 15:55:27.732498445 +0100
 @@ -19,7 +19,7 @@
  
  void Menu_GetFlags(menu_ptr menu, int entry, int *ticked, int *shaded)
@@ -883,8 +903,8 @@ diff -ruN --text a/Libraries/Menu/GetFlags.c b/Libraries/Menu/GetFlags.c
    item = &item[entry];
    if(ticked)
 diff -ruN --text a/Libraries/Menu/GetText.c b/Libraries/Menu/GetText.c
---- a/Libraries/Menu/GetText.c	2026-10-24 15:31:27.246005950 +0100
-+++ b/Libraries/Menu/GetText.c	2026-10-24 15:31:27.257212038 +0100
+--- a/Libraries/Menu/GetText.c	2026-10-24 15:55:27.719911074 +0100
++++ b/Libraries/Menu/GetText.c	2026-10-24 15:55:27.732506797 +0100
 @@ -24,12 +24,12 @@
  char *Menu_GetText(menu_ptr menu, int entry)
  {
@@ -901,8 +921,8 @@ diff -ruN --text a/Libraries/Menu/GetText.c b/Libraries/Menu/GetText.c
      text = item->icondata.text;
  
 diff -ruN --text a/Libraries/Menu/MakeIndrct.c b/Libraries/Menu/MakeIndrct.c
---- a/Libraries/Menu/MakeIndrct.c	2026-10-24 15:31:27.246017788 +0100
-+++ b/Libraries/Menu/MakeIndrct.c	2026-10-24 15:31:27.257222680 +0100
+--- a/Libraries/Menu/MakeIndrct.c	2026-10-24 15:55:27.719919704 +0100
++++ b/Libraries/Menu/MakeIndrct.c	2026-10-24 15:55:27.732514962 +0100
 @@ -37,14 +37,14 @@
   *  entered.
   */
@@ -922,8 +942,8 @@ diff -ruN --text a/Libraries/Menu/MakeIndrct.c b/Libraries/Menu/MakeIndrct.c
  }
  
 diff -ruN --text a/Libraries/Menu/MakeWrite.c b/Libraries/Menu/MakeWrite.c
---- a/Libraries/Menu/MakeWrite.c	2026-10-24 15:31:27.246029779 +0100
-+++ b/Libraries/Menu/MakeWrite.c	2026-10-24 15:31:27.257234708 +0100
+--- a/Libraries/Menu/MakeWrite.c	2026-10-24 15:55:27.719928203 +0100
++++ b/Libraries/Menu/MakeWrite.c	2026-10-24 15:55:27.732523914 +0100
 @@ -23,13 +23,13 @@
  void Menu_MakeWritable(menu_ptr menu, int entry,
                         char *buffer, int size, char *valid)
@@ -942,8 +962,8 @@ diff -ruN --text a/Libraries/Menu/MakeWrite.c b/Libraries/Menu/MakeWrite.c
 +  item->icondata.indirecttext.validstring = DL_PTR (valid);
  }
 diff -ruN --text a/Libraries/Menu/NewEmpty.c b/Libraries/Menu/NewEmpty.c
---- a/Libraries/Menu/NewEmpty.c	2026-10-24 15:31:27.246056726 +0100
-+++ b/Libraries/Menu/NewEmpty.c	2026-10-24 15:31:27.257255971 +0100
+--- a/Libraries/Menu/NewEmpty.c	2026-10-24 15:55:27.719947194 +0100
++++ b/Libraries/Menu/NewEmpty.c	2026-10-24 15:55:27.732540650 +0100
 @@ -79,8 +79,8 @@
  
      /* We now treat the menu title as a text icon block */
@@ -956,8 +976,8 @@ diff -ruN --text a/Libraries/Menu/NewEmpty.c b/Libraries/Menu/NewEmpty.c
  
      /* Copy the text */
 diff -ruN --text a/Libraries/Menu/NewMenu.c b/Libraries/Menu/NewMenu.c
---- a/Libraries/Menu/NewMenu.c	2026-10-24 15:31:27.246069854 +0100
-+++ b/Libraries/Menu/NewMenu.c	2026-10-24 15:31:27.257267459 +0100
+--- a/Libraries/Menu/NewMenu.c	2026-10-24 15:55:27.719956734 +0100
++++ b/Libraries/Menu/NewMenu.c	2026-10-24 15:55:27.732550037 +0100
 @@ -150,18 +150,18 @@
      {
        /* Copy text into indirected menu item */
@@ -1008,8 +1028,8 @@ diff -ruN --text a/Libraries/Menu/NewMenu.c b/Libraries/Menu/NewMenu.c
  
      /* Make sure it is wide enough for indirected title  */
 diff -ruN --text a/Libraries/Menu/RemItem.c b/Libraries/Menu/RemItem.c
---- a/Libraries/Menu/RemItem.c	2026-10-24 15:31:27.246109557 +0100
-+++ b/Libraries/Menu/RemItem.c	2026-10-24 15:31:27.257301438 +0100
+--- a/Libraries/Menu/RemItem.c	2026-10-24 15:55:27.719986070 +0100
++++ b/Libraries/Menu/RemItem.c	2026-10-24 15:55:27.732586259 +0100
 @@ -22,7 +22,7 @@
  
  void Menu_RemoveItem(menu_ptr menu, int entry)
@@ -1020,8 +1040,8 @@ diff -ruN --text a/Libraries/Menu/RemItem.c b/Libraries/Menu/RemItem.c
    if (item->menuflags.data.last)
      return;
 diff -ruN --text a/Libraries/Menu/ReviseWdth.c b/Libraries/Menu/ReviseWdth.c
---- a/Libraries/Menu/ReviseWdth.c	2026-10-24 15:31:27.246125093 +0100
-+++ b/Libraries/Menu/ReviseWdth.c	2026-10-24 15:31:27.257311961 +0100
+--- a/Libraries/Menu/ReviseWdth.c	2026-10-24 15:55:27.719995399 +0100
++++ b/Libraries/Menu/ReviseWdth.c	2026-10-24 15:55:27.732594792 +0100
 @@ -37,11 +37,11 @@
  {
    int                   width, maxwidth=0;
@@ -1037,8 +1057,8 @@ diff -ruN --text a/Libraries/Menu/ReviseWdth.c b/Libraries/Menu/ReviseWdth.c
      else {
        width = strlen(item->icondata.text);
 diff -ruN --text a/Libraries/Menu/SetFlags.c b/Libraries/Menu/SetFlags.c
---- a/Libraries/Menu/SetFlags.c	2026-10-24 15:31:27.246138401 +0100
-+++ b/Libraries/Menu/SetFlags.c	2026-10-24 15:31:27.257323156 +0100
+--- a/Libraries/Menu/SetFlags.c	2026-10-24 15:55:27.720005260 +0100
++++ b/Libraries/Menu/SetFlags.c	2026-10-24 15:55:27.732603646 +0100
 @@ -20,7 +20,7 @@
  
  void Menu_SetFlags(menu_ptr menu, int entry, int ticked, int shaded)
@@ -1049,8 +1069,8 @@ diff -ruN --text a/Libraries/Menu/SetFlags.c b/Libraries/Menu/SetFlags.c
    item = &item[entry];
    item->menuflags.data.ticked = ticked;
 diff -ruN --text a/Libraries/Menu/SetText.c b/Libraries/Menu/SetText.c
---- a/Libraries/Menu/SetText.c	2026-10-24 15:31:27.246151775 +0100
-+++ b/Libraries/Menu/SetText.c	2026-10-24 15:31:27.257334066 +0100
+--- a/Libraries/Menu/SetText.c	2026-10-24 15:55:27.720014456 +0100
++++ b/Libraries/Menu/SetText.c	2026-10-24 15:55:27.732612398 +0100
 @@ -25,7 +25,7 @@
  {
    int       length, oldlength;
@@ -1089,8 +1109,8 @@ diff -ruN --text a/Libraries/Menu/SetText.c b/Libraries/Menu/SetText.c
    else
    {
 diff -ruN --text a/Libraries/Menu/Show.c b/Libraries/Menu/Show.c
---- a/Libraries/Menu/Show.c	2026-10-24 15:31:27.246164637 +0100
-+++ b/Libraries/Menu/Show.c	2026-10-24 15:31:27.257354575 +0100
+--- a/Libraries/Menu/Show.c	2026-10-24 15:55:27.720023742 +0100
++++ b/Libraries/Menu/Show.c	2026-10-24 15:55:27.732621483 +0100
 @@ -28,7 +28,7 @@
    int       itemheight, count = 0;
    menu_item *item;
@@ -1101,8 +1121,8 @@ diff -ruN --text a/Libraries/Menu/Show.c b/Libraries/Menu/Show.c
  
    while(TRUE)
 diff -ruN --text a/Libraries/Save/Save.c b/Libraries/Save/Save.c
---- a/Libraries/Save/Save.c	2026-10-24 15:31:27.247526500 +0100
-+++ b/Libraries/Save/Save.c	2026-10-24 15:31:27.258304440 +0100
+--- a/Libraries/Save/Save.c	2026-10-24 15:55:27.720977161 +0100
++++ b/Libraries/Save/Save.c	2026-10-24 15:55:27.733551052 +0100
 @@ -72,7 +72,7 @@
    icon_block iconblock;
  
@@ -1136,8 +1156,8 @@ diff -ruN --text a/Libraries/Save/Save.c b/Libraries/Save/Save.c
                                           saveblock->ram_progress);
  
 diff -ruN --text a/Libraries/Str/LeafName.c b/Libraries/Str/LeafName.c
---- a/Libraries/Str/LeafName.c	2026-10-24 15:31:27.248554974 +0100
-+++ b/Libraries/Str/LeafName.c	2026-10-24 15:31:27.259516712 +0100
+--- a/Libraries/Str/LeafName.c	2026-10-24 15:55:27.722337498 +0100
++++ b/Libraries/Str/LeafName.c	2026-10-24 15:55:27.735008907 +0100
 @@ -32,12 +32,12 @@
  
  extern char *Str_LeafName(const char *path)
@@ -1154,8 +1174,8 @@ diff -ruN --text a/Libraries/Str/LeafName.c b/Libraries/Str/LeafName.c
    while ( (ch = *(path++)) != '\0') ;
  
 diff -ruN --text a/Libraries/Template/ClearAll.c b/Libraries/Template/ClearAll.c
---- a/Libraries/Template/ClearAll.c	2026-10-24 15:31:27.248782336 +0100
-+++ b/Libraries/Template/ClearAll.c	2026-10-24 15:31:27.259622212 +0100
+--- a/Libraries/Template/ClearAll.c	2026-10-24 15:55:27.722808170 +0100
++++ b/Libraries/Template/ClearAll.c	2026-10-24 15:55:27.735121917 +0100
 @@ -48,6 +48,6 @@
  
    LinkList_Init(&template_list);         /* just to be on the safe side! */
@@ -1165,8 +1185,8 @@ diff -ruN --text a/Libraries/Template/ClearAll.c b/Libraries/Template/ClearAll.c
      Font_LoseAllFonts(template_fontarray);
  }
 diff -ruN --text a/Libraries/Template/Clone.c b/Libraries/Template/Clone.c
---- a/Libraries/Template/Clone.c	2026-10-24 15:31:27.248792896 +0100
-+++ b/Libraries/Template/Clone.c	2026-10-24 15:31:27.259632744 +0100
+--- a/Libraries/Template/Clone.c	2026-10-24 15:55:27.722830771 +0100
++++ b/Libraries/Template/Clone.c	2026-10-24 15:55:27.735139422 +0100
 @@ -54,46 +54,46 @@
      else if (maxtitlesize < 1)
        maxtitlesize = 260;                         /* default ind. title size */
@@ -1233,8 +1253,8 @@ diff -ruN --text a/Libraries/Template/Clone.c b/Libraries/Template/Clone.c
      }
    }
 diff -ruN --text a/Libraries/Template/Delete.c b/Libraries/Template/Delete.c
---- a/Libraries/Template/Delete.c	2026-10-24 15:31:27.248801258 +0100
-+++ b/Libraries/Template/Delete.c	2026-10-24 15:31:27.259642604 +0100
+--- a/Libraries/Template/Delete.c	2026-10-24 15:55:27.722848260 +0100
++++ b/Libraries/Template/Delete.c	2026-10-24 15:55:27.735155747 +0100
 @@ -28,7 +28,7 @@
    if (t == NULL)
      return;
@@ -1245,8 +1265,8 @@ diff -ruN --text a/Libraries/Template/Delete.c b/Libraries/Template/Delete.c
  
    LinkList_Unlink(&template_list, &(t->header));
 diff -ruN --text a/Libraries/Template/Find.c b/Libraries/Template/Find.c
---- a/Libraries/Template/Find.c	2026-10-24 15:31:27.248809802 +0100
-+++ b/Libraries/Template/Find.c	2026-10-24 15:31:27.259650541 +0100
+--- a/Libraries/Template/Find.c	2026-10-24 15:55:27.722874730 +0100
++++ b/Libraries/Template/Find.c	2026-10-24 15:55:27.735164218 +0100
 @@ -42,7 +42,7 @@
          /*
           * Make this window's sprite area point to the required sprite area.
@@ -1257,8 +1277,8 @@ diff -ruN --text a/Libraries/Template/Find.c b/Libraries/Template/Find.c
        return(t);
      }
 diff -ruN --text a/Libraries/Template/Free.c b/Libraries/Template/Free.c
---- a/Libraries/Template/Free.c	2026-10-24 15:31:27.248817888 +0100
-+++ b/Libraries/Template/Free.c	2026-10-24 15:31:27.259668691 +0100
+--- a/Libraries/Template/Free.c	2026-10-24 15:55:27.722892333 +0100
++++ b/Libraries/Template/Free.c	2026-10-24 15:55:27.735177078 +0100
 @@ -29,16 +29,16 @@
  
    window = *windowdef;
@@ -1282,8 +1302,8 @@ diff -ruN --text a/Libraries/Template/Free.c b/Libraries/Template/Free.c
    }
  
 diff -ruN --text a/Libraries/Template/LinkSprite.c b/Libraries/Template/LinkSprite.c
---- a/Libraries/Template/LinkSprite.c	2026-10-24 15:31:27.248837234 +0100
-+++ b/Libraries/Template/LinkSprite.c	2026-10-24 15:31:27.259694048 +0100
+--- a/Libraries/Template/LinkSprite.c	2026-10-24 15:55:27.722928582 +0100
++++ b/Libraries/Template/LinkSprite.c	2026-10-24 15:55:27.735197953 +0100
 @@ -33,7 +33,7 @@
  
    wblock = Template_Find(identifier);
@@ -1294,8 +1314,8 @@ diff -ruN --text a/Libraries/Template/LinkSprite.c b/Libraries/Template/LinkSpri
  
  /***************************************************************************/
 diff -ruN --text a/Libraries/Template/LoadFile.c b/Libraries/Template/LoadFile.c
---- a/Libraries/Template/LoadFile.c	2026-10-24 15:31:27.248845767 +0100
-+++ b/Libraries/Template/LoadFile.c	2026-10-24 15:31:27.259703460 +0100
+--- a/Libraries/Template/LoadFile.c	2026-10-24 15:55:27.722945833 +0100
++++ b/Libraries/Template/LoadFile.c	2026-10-24 15:55:27.735207528 +0100
 @@ -140,21 +140,21 @@
   *  to more than 5kB (unlikely unless you are being very antisocial towards
   *  Mr. Wimp)
@@ -1342,8 +1362,8 @@ diff -ruN --text a/Libraries/Template/LoadFile.c b/Libraries/Template/LoadFile.c
      Wimp_LoadTemplate(&tblock);
  
 diff -ruN --text a/Libraries/Template/UseOutFont.c b/Libraries/Template/UseOutFont.c
---- a/Libraries/Template/UseOutFont.c	2026-10-24 15:31:27.248868347 +0100
-+++ b/Libraries/Template/UseOutFont.c	2026-10-24 15:31:27.259721586 +0100
+--- a/Libraries/Template/UseOutFont.c	2026-10-24 15:55:27.722988328 +0100
++++ b/Libraries/Template/UseOutFont.c	2026-10-24 15:55:27.735226601 +0100
 @@ -23,7 +23,7 @@
  static void Template_ExitHandler(void)
  /*  Called on exit to clean up the fonts we're using */
@@ -1363,8 +1383,8 @@ diff -ruN --text a/Libraries/Template/UseOutFont.c b/Libraries/Template/UseOutFo
    template_fontarray = malloc(sizeof(font_array));
    if (template_fontarray == NULL)
 diff -ruN --text a/Libraries/Window/ModeChange.c b/Libraries/Window/ModeChange.c
---- a/Libraries/Window/ModeChange.c	2026-10-24 15:31:27.249915916 +0100
-+++ b/Libraries/Window/ModeChange.c	2026-10-24 15:31:27.260843036 +0100
+--- a/Libraries/Window/ModeChange.c	2026-10-24 15:55:27.724915977 +0100
++++ b/Libraries/Window/ModeChange.c	2026-10-24 15:55:27.736374416 +0100
 @@ -80,7 +80,7 @@
    font_array      fontconvert;
    int             i;
@@ -1375,8 +1395,8 @@ diff -ruN --text a/Libraries/Window/ModeChange.c b/Libraries/Window/ModeChange.c
  
    /*  Go through the template's font usage array...
 diff -ruN --text a/Libraries/Window/SetTitle.c b/Libraries/Window/SetTitle.c
---- a/Libraries/Window/SetTitle.c	2026-10-24 15:31:27.249950442 +0100
-+++ b/Libraries/Window/SetTitle.c	2026-10-24 15:31:27.260887899 +0100
+--- a/Libraries/Window/SetTitle.c	2026-10-24 15:55:27.724959477 +0100
++++ b/Libraries/Window/SetTitle.c	2026-10-24 15:55:27.736420297 +0100
 @@ -40,7 +40,7 @@
    if (!info.block.titleflags.data.indirected)
      return;                /* We can't set the title if it isn't indirected! */

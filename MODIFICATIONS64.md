@@ -1,12 +1,12 @@
 # DeskLib64 - every change from DeskLib32, and why
 
-This document lists **every** difference between the source in `src/` and DeskLib32 (Andrew Youll's build of upstream DeskLib: https://github.com/adyoull/desklib32, commit `957863a`), and says what is built from the assembler instead. For each change it gives the problem, the evidence, what was changed, what it means for programs that use the library, and how it was checked. The exact source changes are also in `patches/desklib64-vs-desklib32.diff` (62 modified files and 1 added).
+This document lists **every** difference between the source in `src/` and DeskLib32 (Andrew Youll's build of upstream DeskLib: https://github.com/adyoull/desklib32, commit `957863a`), and says what is built from the assembler instead. For each change it gives the problem, the evidence, what was changed, what it means for programs that use the library, and how it was checked. The exact source changes are also in `patches/desklib64-vs-desklib32.diff` (63 modified files and 1 added).
 
 ---
 
 ## 1. What the source is based on
 
-`src/` is DeskLib32 at `957863a` (638 files): 576 are byte-identical to it, 62 are modified (9 headers, 53 library C files) and 1 is added (`include/dl64.h`). The 259 ARM assembler files (`Libraries/*/*.s`) and their include files are **unchanged and not built**: `gen/` and `hand/` have the same SWI veneers in C (section 3).
+`src/` is DeskLib32 at `957863a` (638 files): 575 are byte-identical to it, 63 are modified (9 headers, 54 library C files) and 1 is added (`include/dl64.h`). The 259 ARM assembler files (`Libraries/*/*.s`) and their include files are **unchanged and not built**: `gen/` and `hand/` have the same SWI veneers in C (section 3).
 
 The target is AArch64 RISC OS 64, with the AArch64 RISC OS GCC 16 tool chain (0.14 or newer) and `-munixlib -O2 -fsigned-char`. On this target `int` and `long` are 32 and 64 bits and a pointer is 64 bits; the Window Manager's data structures are made of 32-bit words.
 
@@ -98,6 +98,16 @@ The validation string is compared with `0` and `0xffffffffu` as words (it is a `
 **Change.** The name is copied whole (`strcpy`: the buffer was allocated with `strlen + 1`).
 
 **Verification.** All three forms (names, entries, full entries) return the three objects.
+
+### C7. `Clipboard/Clipboard.c` - the size of the data request, and an uncleared message
+
+**Problem.** `Clipboard_Request` sets the message size to `44 + num` where `num` is the number of file types: that counts bytes where it must count 4-byte words, so the size is not a multiple of 4 and the Wimp refuses the message ("Message block is too big / not a multiple of 4"). The error is not returned to the caller, so the request is silently never sent (this is also in DeskLib32). `Clipboard_Claim` builds its message without clearing it, so the flag bits above the three that are set contain stack contents.
+
+**Evidence.** `tests/clip` runs two tasks: the second calls `Clipboard_Claim` and `Clipboard_Request` and sends the same messages directly with `Wimp_SendMessage`. The claim arrives at the first task; the request from `Clipboard_Request` did not, while the same message with the size 52 did.
+
+**Change.** The size is `44 + 4 * num`, and `Clipboard_Claim` clears its message.
+
+**Verification.** Both messages arrive, with the file types and the internal handle intact.
 
 ---
 

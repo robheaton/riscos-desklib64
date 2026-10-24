@@ -1,0 +1,3 @@
+| DeskLib64 clipboard test: the second task
+Set DLClip$Dir <Obey$Dir>
+Run <Obey$Dir>.!RunImage paster
