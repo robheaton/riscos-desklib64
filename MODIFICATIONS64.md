@@ -89,6 +89,16 @@ The validation string is compared with `0` and `0xffffffffu` as words (it is a `
 
 **Verification.** `tests/dialogs` opens, fills and closes dialogue boxes made from such a template many times.
 
+### C6. `Filing/ReadDir.c` - the directory name is copied with `sizeof` of a pointer
+
+**Problem.** `Filing_OpenDir` copies the name with `strncpy (dirdata->dirname, dirname, sizeof (dirdata->dirname) - 1)`. `dirname` is a `char *`, so the size is that of a pointer: 4 on 32 bits (three characters copied), 8 on 64 bits (seven). The later calls read a truncated path, so `Filing_ReadDir` finds no objects (or the wrong directory) for any name longer than that. This is also in DeskLib32.
+
+**Evidence.** `tests/filing`: reading a directory with `Filing_OpenDir` and `Filing_ReadDir` returned no objects, while `Filing_ReadDirNames` on the same path returned three.
+
+**Change.** The name is copied whole (`strcpy`: the buffer was allocated with `strlen + 1`).
+
+**Verification.** All three forms (names, entries, full entries) return the three objects.
+
 ---
 
 ## 3. Assembler sources

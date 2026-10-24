@@ -68,8 +68,7 @@ os_error *Filing_OpenDir(const char *dirname, filing_dirdata *dirdata,
  dirdata->dirname=MALLOC(strlen(dirname)+1);
  if (dirdata->dirname==NULL)
    return __outofmemory;
- strncpy(dirdata->dirname,dirname,sizeof(dirdata->dirname)-1);
- dirdata->dirname[sizeof(dirdata->dirname)-1] = '\0';
+ strcpy(dirdata->dirname,dirname);   /* (was strncpy of sizeof (a pointer) - 1 characters: only 3, or 7 on 64 bits) */
 
  dirdata->buf=MALLOC(bufsize);
  if (dirdata->buf==NULL)

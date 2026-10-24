@@ -16,11 +16,13 @@ All of DeskLib's C (about 270 files) and 259 veneers: 506 objects in `libDeskLib
 
 * **`msgs`** (command line, 32 checks): `MsgTrans_LoadFile` (found through the resource path), `MsgTrans_Lookup` and `MsgTrans_LookupPS` with up to four `%n` parameters, defaults (`Token:default`), a missing token, a result cut at the buffer size, `MsgTrans_LoseFile`; the SWI veneers `MessageTrans_FileInfo`, `OpenFile` (with a buffer in the heap), `Lookup` (with and without a buffer) and `CloseFile`; the global messages; `Msgs_LoadFile`, `Msgs_Lookup` (with an include and a default), `Msgs_printf` and `Msgs_DropGroup`.
 
+* **`filing`** (command line, 81 checks): all of `File` (open, read, write, seek, extent, size, type, date, load, copy, delete, directories) and `Filing` (catalogue, single entries, `OpenDir`/`ReadDir`/`CloseDir` in all three forms, the OS_GBPB veneers with a match, path functions, `ScanDir`), including the macros over `SWI ()` with pointer arguments. File system dependent values (the internal name `SIN`) are not checked.
+
 ## Known problems
 * The older `Dialog` library (`Dialog_WaitForClick`) does not return in testing: the task stops receiving events. It has not been explained yet. `Dialog2` is not affected and is the one to use.
 
 ## Not run yet
-`DragASpr`, `Font` and the font menu, `Print` and `PDriver`, `Clear`, `Clipboard`, `Filing`/`File`, `Url`, `Tinct`, `Serial`, `ColourTran`. They compile, the veneers were translated or written from the assembler, and the structures have the OS layout, but nobody has run them. If something fails, please open an issue with the function and what happened.
+`DragASpr`, `Font` and the font menu, `Print` and `PDriver`, `Clear`, `Clipboard`, `Url`, `Tinct`, `Serial`, `ColourTran`. They compile, the veneers were translated or written from the assembler, and the structures have the OS layout, but nobody has run them. If something fails, please open an issue with the function and what happened.
 
 ## Known limits
 * Arguments after the fourth to the translated veneers and structures passed by value are assumed to fit a 32-bit word (see docs/PORTING.md).
