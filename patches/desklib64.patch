@@ -1,0 +1,1378 @@
+diff -ruN --text a/include/Core.h b/include/Core.h
+--- a/include/Core.h	2026-10-24 12:46:48.146937470 +0100
++++ b/include/Core.h	2026-10-24 12:46:48.158136887 +0100
+@@ -26,6 +26,15 @@
+ 
+ #include <stddef.h>
+ /* For NULL, size_t etc */
++#include <stdint.h>
++
++/* DeskLib64: a pointer inside an operating system data structure (a window or icon block, a menu, a message ...) is a 32 bit
++   word: the structures keep the layout that the OS reads and writes, so such a field is a dl_ptr, not a pointer.  The data
++   that it points to must be below 4 GB (the heaps of RISC OS 64 programs are).  DL_PTR makes one from a pointer, DL_P
++   gives the pointer back (as void *). */
++typedef uint32_t dl_ptr;
++#define DL_PTR(p) ((dl_ptr) (uintptr_t) (p))
++#define DL_P(v)   ((void *) (uintptr_t) (v))
+ 
+ #ifdef __cplusplus
+ extern "C" {
+diff -ruN --text a/include/dl64.h b/include/dl64.h
+--- a/include/dl64.h	1970-01-01 01:00:00.000000000 +0100
++++ b/include/dl64.h	2026-10-24 12:46:48.158911795 +0100
+@@ -0,0 +1,64 @@
++/* dl64.h: what the generated SWI veneers (tools/armv2c.py) need: the SWI call and DeskLib's types (not PCI.h, USB.h, BackTrace.h and Debug.h: hardware or Norcroft specific) */
++#ifndef DL64_H
++#define DL64_H
++#include <stdint.h>
++extern unsigned long swi_x (unsigned long swi, unsigned long regs[10]);
++extern unsigned long swi_f (unsigned long swi, unsigned long regs[10]);	/* as swi_x, but returns the flags: N=8 Z=4 C=2 V=1 */
++#include "DeskLib:Clear.h"
++#include "DeskLib:Clipboard.h"
++#include "DeskLib:ColourTran.h"
++#include "DeskLib:Coord.h"
++#include "DeskLib:Core.h"
++#include "DeskLib:Dialog.h"
++#include "DeskLib:Dialog2.h"
++#include "DeskLib:Drag.h"
++#include "DeskLib:DragASpr.h"
++#include "DeskLib:Environment.h"
++#include "DeskLib:Error.h"
++#include "DeskLib:Event.h"
++#include "DeskLib:EventMsg.h"
++#include "DeskLib:File.h"
++#include "DeskLib:Filing.h"
++#include "DeskLib:Filter.h"
++#include "DeskLib:Font.h"
++#include "DeskLib:Font2.h"
++#include "DeskLib:GFX.h"
++#include "DeskLib:Handler.h"
++#include "DeskLib:Hourglass.h"
++#include "DeskLib:Icon.h"
++#include "DeskLib:Kbd.h"
++#include "DeskLib:KernelSWIs.h"
++#include "DeskLib:KeyCodes.h"
++#include "DeskLib:LinkList.h"
++#include "DeskLib:Mem.h"
++#include "DeskLib:Menu.h"
++#include "DeskLib:Menu2.h"
++#include "DeskLib:Module.h"
++#include "DeskLib:MsgTrans.h"
++#include "DeskLib:Msgs.h"
++#include "DeskLib:PDriver.h"
++#include "DeskLib:Pane.h"
++#include "DeskLib:Pane2.h"
++#include "DeskLib:Pointer.h"
++#include "DeskLib:Print.h"
++#include "DeskLib:Resource.h"
++#include "DeskLib:SWI.h"
++#include "DeskLib:Save.h"
++#include "DeskLib:Screen.h"
++#include "DeskLib:Serial.h"
++#include "DeskLib:Slider.h"
++#include "DeskLib:Sprite.h"
++#include "DeskLib:Str.h"
++#include "DeskLib:TaskWindow.h"
++#include "DeskLib:Template.h"
++#include "DeskLib:TextFile.h"
++#include "DeskLib:Time.h"
++#include "DeskLib:Tinct.h"
++#include "DeskLib:Url.h"
++#include "DeskLib:Wimp.h"
++#include "DeskLib:WimpMsg.h"
++#include "DeskLib:WimpSWIs.h"
++#include "DeskLib:Window.h"
++/* an argument as the 64 bit value of a register: its bytes, zero extended (a pointer whole, a 32 bit integer as it is, a small structure - the ARM convention passed it in a register - as its word) */
++#define DL_ARG(x) ({ __typeof__ (x) dl_v = (x); uint64_t dl_r = 0; _Static_assert (sizeof dl_v <= 8, "argument too big"); __builtin_memcpy (&dl_r, &dl_v, sizeof dl_v); dl_r; })
++#endif
+diff -ruN --text a/include/Font.h b/include/Font.h
+--- a/include/Font.h	2026-10-24 12:46:48.147118492 +0100
++++ b/include/Font.h	2026-10-24 12:46:48.158316399 +0100
+@@ -88,7 +88,7 @@
+ 
+ typedef struct
+ {
+-  char *s;              /* string */
++  dl_ptr s;             /* string (a char *) */
+   int x;                /* in/out, in 1/72000s of an inch */
+   int y;                /* in/out, in 1/72000s of an inch */
+   int split;            /* in/out: space char, or -1      */
+diff -ruN --text a/include/Menu2.h b/include/Menu2.h
+--- a/include/Menu2.h	2026-10-24 12:46:48.147267781 +0100
++++ b/include/Menu2.h	2026-10-24 12:46:48.158493540 +0100
+@@ -46,7 +46,7 @@
+ */
+ 
+ 
+-typedef int menu2_handle;
++typedef intptr_t menu2_handle;   /* DeskLib64: it holds a pointer */
+ /*
+   This is used to identify a Menu2 menu,
+ */
+diff -ruN --text a/include/PCI.h b/include/PCI.h
+--- a/include/PCI.h	2026-10-24 12:46:48.147316501 +0100
++++ b/include/PCI.h	2026-10-24 12:46:48.158540986 +0100
+@@ -55,7 +55,7 @@
+ typedef struct {
+   pci_aflags    flags;     /* Input values */
+   unsigned int  index;
+-  unsigned int  flags;    /* Output values */
++  unsigned int  oflags;   /* Output values (named flags in DeskLib32: a second member of that name is an error in GCC) */
+   unsigned int  address;
+   unsigned int  size;
+   void         *laddress;
+diff -ruN --text a/include/PDriver.h b/include/PDriver.h
+--- a/include/PDriver.h	2026-10-24 12:46:48.147327827 +0100
++++ b/include/PDriver.h	2026-10-24 12:46:48.158554594 +0100
+@@ -209,7 +209,7 @@
+   int              drivertype : 16;
+   wimp_point       resolution;
+   print_features   features;
+-  char             *description;
++  dl_ptr           description;  /* char * */
+   wimp_point       halftone_res;
+   int              id_number;
+ } printer_info;
+diff -ruN --text a/include/Print.h b/include/Print.h
+--- a/include/Print.h	2026-10-24 12:46:48.147374380 +0100
++++ b/include/Print.h	2026-10-24 12:46:48.158609660 +0100
+@@ -89,7 +89,7 @@
+ */
+ 
+ 
+-typedef int print_result;
++typedef intptr_t print_result;   /* DeskLib64: a print_results value or an os_error pointer */
+ /*
+   This type is passed to the result function to report the outcome of the
+   attempt to print.
+diff -ruN --text a/include/Screen.h b/include/Screen.h
+--- a/include/Screen.h	2026-10-24 12:46:48.147430281 +0100
++++ b/include/Screen.h	2026-10-24 12:46:48.158676085 +0100
+@@ -104,7 +104,7 @@
+ typedef union {
+   unsigned int       screen_mode;
+   screen_modesprite  sprite_mode;
+-  screen_modespec   *spec_mode;
++  dl_ptr             spec_mode;   /* screen_modespec * */
+ } screen_modeval;
+ 
+ 
+diff -ruN --text a/include/Sprite.h b/include/Sprite.h
+--- a/include/Sprite.h	2026-10-24 12:46:48.147471494 +0100
++++ b/include/Sprite.h	2026-10-24 12:46:48.158721993 +0100
+@@ -108,11 +108,11 @@
+ typedef struct
+ {
+     int          callno;
+-    sprite_area  spritearea;
+-    void         *sprite; /* Either const char *name, either const
++    dl_ptr       spritearea;  /* sprite_area */
++    dl_ptr       sprite; /* void *: either const char *name, either const
+                              sprite_header *sprite, depending on
+                              callno & (1<<9) */
+-    void         *savearea;
++    dl_ptr       savearea;   /* void * */
+ } sprite_outputstate;
+ /*
+   This is used to store the VDU state so that when you redirect VDU output
+diff -ruN --text a/include/Wimp.h b/include/Wimp.h
+--- a/include/Wimp.h	2026-10-24 12:46:48.147576730 +0100
++++ b/include/Wimp.h	2026-10-24 12:46:48.158834450 +0100
+@@ -382,8 +382,8 @@
+ 
+ typedef struct
+ {
+-  char         *buffer;
+-  char         *validstring;
++  dl_ptr       buffer;       /* char * */
++  dl_ptr       validstring;  /* char * */
+   unsigned int bufflen;
+ } icon_indtext;
+ /*
+@@ -395,8 +395,8 @@
+ 
+ typedef struct
+ {
+-  const char   *name;
+-  void         *spritearea;
++  dl_ptr       name;         /* const char * */
++  dl_ptr       spritearea;   /* void *  (1 = the Wimp sprite area) */
+   unsigned int nameisname;
+ } icon_indsprite;
+ /*
+@@ -573,7 +573,7 @@
+   wimp_box              workarearect;
+   icon_flags            titleflags;
+   icon_flags            workflags;
+-  void                  *spritearea;
++  dl_ptr                spritearea;   /* void * */
+   window_minsize        minsize;
+   icon_data             title;
+   unsigned int          numicons;
+@@ -792,7 +792,7 @@
+ typedef struct
+ {
+   int           shapenumber;
+-  char          *shapedata;
++  dl_ptr        shapedata;    /* char * */
+   unsigned int  width;
+   unsigned int  height;
+   wimp_point    active;
+@@ -905,7 +905,7 @@
+ 
+ typedef union
+ {
+-  menu_ptr      menu;
++  dl_ptr        menu;         /* menu_ptr */
+   window_handle window;
+   int           value;
+ } menu_submenu;
+@@ -1207,7 +1207,7 @@
+ 
+ typedef struct
+ {
+-  char *buffer;
++  dl_ptr buffer;     /* char * */
+   int  buffsize;
+ } message_ramfetch;
+ /*
+@@ -1219,7 +1219,7 @@
+ 
+ typedef struct
+ {
+-  char *buffer;   /* copied directly from initiating RamFetch */
++  dl_ptr buffer;   /* char *: copied directly from initiating RamFetch */
+   int  byteswritten;
+ } message_ramtransmit;
+ /*
+@@ -1517,11 +1517,11 @@
+ 
+ typedef struct
+ {
+-  window_block   *buffer;
+-  char           *workfree;
+-  char           *workend;
+-  font_array     *font;
+-  char           *name;
++  dl_ptr         buffer;       /* window_block * */
++  dl_ptr         workfree;     /* char * */
++  dl_ptr         workend;      /* char * */
++  dl_ptr         font;         /* font_array * */
++  dl_ptr         name;         /* char * */
+   unsigned int   index;
+ } template_block;
+ /*
+diff -ruN --text a/Libraries/Clear/Load.c b/Libraries/Clear/Load.c
+--- a/Libraries/Clear/Load.c	2026-10-24 12:46:48.138608748 +0100
++++ b/Libraries/Clear/Load.c	2026-10-24 12:46:48.149459693 +0100
+@@ -61,11 +61,11 @@
+   if((temp = malloc(sizeof(clear_picture) + creator_length)) == NULL)
+     return Clear__AbortLoad(in, temp);
+ 
+-  temp->creator = (char *)(int)&temp[1];
++  temp->creator = (char *)(intptr_t)&temp[1];
+   temp->palette = NULL;
+   temp->bitmap = NULL;
+ 
+-  if(File_ReadBytes(in, (char *)(int)temp->creator, creator_length))
++  if(File_ReadBytes(in, (char *)(intptr_t)temp->creator, creator_length))
+     return Clear__AbortLoad(in, temp);
+ 
+   temp->creatorversion = File_Read32(in);
+diff -ruN --text a/Libraries/Dialog/ShowAt.c b/Libraries/Dialog/ShowAt.c
+--- a/Libraries/Dialog/ShowAt.c	2026-10-24 12:46:48.139219009 +0100
++++ b/Libraries/Dialog/ShowAt.c	2026-10-24 12:46:48.150078365 +0100
+@@ -26,6 +26,6 @@
+ extern void Dialog_ShowAt( dialog dbox, int x, int y )
+ {
+   dbox->state.isstatic = FALSE;
+-  Wimp_CreateMenu( (menu_block *) dbox->window, x, y);
++  Wimp_CreateMenu( (menu_block *)(intptr_t) dbox->window, x, y);
+   dbox->state.stillopen = TRUE;
+ }
+diff -ruN --text a/Libraries/Dialog/Show.c b/Libraries/Dialog/Show.c
+--- a/Libraries/Dialog/Show.c	2026-10-24 12:46:48.139203061 +0100
++++ b/Libraries/Dialog/Show.c	2026-10-24 12:46:48.150062596 +0100
+@@ -43,7 +43,7 @@
+    */
+   pos.x = (screen_size.x - win_size.x) / 2;
+   pos.y = (screen_size.y + win_size.y) / 2;
+-  Wimp_CreateMenu((menu_block *) dbox->window, pos.x, pos.y);
++  Wimp_CreateMenu((menu_block *)(intptr_t) dbox->window, pos.x, pos.y);
+ 
+   dbox->state.stillopen = TRUE;
+ }
+diff -ruN --text a/Libraries/Dialog2/OpenLeaf.c b/Libraries/Dialog2/OpenLeaf.c
+--- a/Libraries/Dialog2/OpenLeaf.c	2026-10-24 12:46:48.139367870 +0100
++++ b/Libraries/Dialog2/OpenLeaf.c	2026-10-24 12:46:48.150227963 +0100
+@@ -31,7 +31,7 @@
+ Dialog2__CommonOpenCode( dialog2);
+ 
+ Wimp_CreateSubMenu(
+-	(menu_ptr) dialog2->window,
++	(menu_ptr)(intptr_t) dialog2->window,
+ 	event->data.message.data.words[1],
+ 	event->data.message.data.words[2]
+ 	);
+diff -ruN --text a/Libraries/Dialog2/OpenMenu.c b/Libraries/Dialog2/OpenMenu.c
+--- a/Libraries/Dialog2/OpenMenu.c	2026-10-24 12:46:48.139383097 +0100
++++ b/Libraries/Dialog2/OpenMenu.c	2026-10-24 12:46:48.150243739 +0100
+@@ -35,7 +35,7 @@
+ 
+ Dialog2_Window_GetWindowOpenPos( &pos, openpos, dialog2->window);
+ Wimp_CreateMenu( (menu_block *) -1, -1, -1);
+-Wimp_CreateMenu( (menu_block *) dialog2->window, pos.x, pos.y);
++Wimp_CreateMenu( (menu_block *)(intptr_t) dialog2->window, pos.x, pos.y);
+ 
+ return NOERROR;
+ }
+diff -ruN --text a/Libraries/File/LoadTo.c b/Libraries/File/LoadTo.c
+--- a/Libraries/File/LoadTo.c	2026-10-24 12:46:48.140207719 +0100
++++ b/Libraries/File/LoadTo.c	2026-10-24 12:46:48.150992121 +0100
+@@ -33,8 +33,8 @@
+   _kernel_oserror  *error;
+ 
+   r.r[0] = 255;
+-  r.r[1] = (int) filename;
+-  r.r[2] = (int) address;
++  r.r[1] = (intptr_t) filename;
++  r.r[2] = (intptr_t) address;
+   r.r[3] = 0;
+ 
+   error = _kernel_swi( SWI_OS_File, &r, &r );
+diff -ruN --text a/Libraries/Filing/Filenames.c b/Libraries/Filing/Filenames.c
+--- a/Libraries/Filing/Filenames.c	2026-10-24 12:46:48.140352775 +0100
++++ b/Libraries/Filing/Filenames.c	2026-10-24 12:46:48.151138076 +0100
+@@ -54,7 +54,7 @@
+    return NULL;
+  else {
+    char *p=strrchr(filename,'.');
+-   return (p ? p+1 : (char *)(int)filename);
++   return (p ? p+1 : (char *)(intptr_t)filename);
+  }
+ }
+ 
+diff -ruN --text a/Libraries/Filing/ReadDir.c b/Libraries/Filing/ReadDir.c
+--- a/Libraries/Filing/ReadDir.c	2026-10-24 12:46:48.140444450 +0100
++++ b/Libraries/Filing/ReadDir.c	2026-10-24 12:46:48.151217935 +0100
+@@ -155,12 +155,12 @@
+    switch(dirdata->type) {
+      case readdirtype_DIRENTRY:
+       dirdata->read--;
+-      dirdata->act.direntry=(filing_direntry *)(((int)(&(dirdata->act.direntry->name))+
++      dirdata->act.direntry=(filing_direntry *)(((intptr_t)(&(dirdata->act.direntry->name))+
+                                                strlen(dirdata->act.direntry->name)+4)&~3);
+       break;
+      case readdirtype_FULLDIRENTRY:
+       dirdata->read--;
+-      dirdata->act.fulldirentry=(filing_fulldirentry *)(((int)(&(dirdata->act.fulldirentry->name))+
++      dirdata->act.fulldirentry=(filing_fulldirentry *)(((intptr_t)(&(dirdata->act.fulldirentry->name))+
+                                                        strlen(dirdata->act.fulldirentry->name)+4)&~3);
+       break;
+      case readdirtype_NAMEONLY:
+diff -ruN --text a/Libraries/Filing/ScanDir.c b/Libraries/Filing/ScanDir.c
+--- a/Libraries/Filing/ScanDir.c	2026-10-24 12:46:48.140462110 +0100
++++ b/Libraries/Filing/ScanDir.c	2026-10-24 12:46:48.151235784 +0100
+@@ -57,7 +57,7 @@
+      actptr=(filing_fulldirentry *)(void *)direntries;
+    }
+    else {
+-     actptr=(filing_fulldirentry *)(((int)(&actptr->name)+strlen(actptr->name)+4)&~3);
++     actptr=(filing_fulldirentry *)(((intptr_t)(&actptr->name)+strlen(actptr->name)+4)&~3);
+    }
+    readnum--;
+ 
+diff -ruN --text a/Libraries/Filing/ScanDirDir.c b/Libraries/Filing/ScanDirDir.c
+--- a/Libraries/Filing/ScanDirDir.c	2026-10-24 12:46:48.140477502 +0100
++++ b/Libraries/Filing/ScanDirDir.c	2026-10-24 12:46:48.151251574 +0100
+@@ -58,7 +58,7 @@
+      actptr = (filing_fulldirentry *)(void *)direntries;
+    }
+    else {
+-     actptr=(filing_fulldirentry *)(((int)(&actptr->name)+strlen(actptr->name)+4)&~3);
++     actptr=(filing_fulldirentry *)(((intptr_t)(&actptr->name)+strlen(actptr->name)+4)&~3);
+    }
+    readnum--;
+ 
+@@ -94,7 +94,7 @@
+      actptr = (filing_fulldirentry *)(void *)direntries;
+    }
+    else {
+-     actptr=(filing_fulldirentry *)(((int)(&actptr->name)+strlen(actptr->name)+4)&~3);
++     actptr=(filing_fulldirentry *)(((intptr_t)(&actptr->name)+strlen(actptr->name)+4)&~3);
+    }
+    readnum--;
+ 
+diff -ruN --text a/Libraries/Icon/AlterValid.c b/Libraries/Icon/AlterValid.c
+--- a/Libraries/Icon/AlterValid.c	2026-10-24 12:46:48.141693282 +0100
++++ b/Libraries/Icon/AlterValid.c	2026-10-24 12:46:48.152545784 +0100
+@@ -38,21 +38,21 @@
+   else
+   {
+     /* Get length of existing validation string, for info */
+-    len_existing = strlencr(wimpicon.data.indirecttext.validstring);
++    len_existing = strlencr(((char *) DL_P (wimpicon.data.indirecttext.validstring)));
+ 
+     /* If user called us only to find length of existing string, return here */
+     if (newvalidation == NULL)
+       return len_existing;
+ 
+     /* Check old vs. new strings are different - if not, do nothing */
+-    if (!strcmpcr(wimpicon.data.indirecttext.validstring, newvalidation))
++    if (!strcmpcr(((char *) DL_P (wimpicon.data.indirecttext.validstring)), newvalidation))
+        return 0;
+ 
+     /* Return difference between strings, for info */
+     diff = len_existing - strlencr(newvalidation);
+ 
+     /* Note: nothing to prevent buffer overrun */
+-    strcpy(wimpicon.data.indirecttext.validstring, newvalidation);
++    strcpy(((char *) DL_P (wimpicon.data.indirecttext.validstring)), newvalidation);
+ 
+     Wimp_SetIconState(window, icon, 0, 0);
+   }
+diff -ruN --text a/Libraries/Icon/BarIconUse.c b/Libraries/Icon/BarIconUse.c
+--- a/Libraries/Icon/BarIconUse.c	2026-10-24 12:46:48.141735931 +0100
++++ b/Libraries/Icon/BarIconUse.c	2026-10-24 12:46:48.152583567 +0100
+@@ -50,8 +50,8 @@
+   strncpy(iconname,spritename,wimp_MAXNAME);
+   iconname[wimp_MAXNAME] = '\0';
+ 
+-  icreate.icondata.data.indirectsprite.name = iconname;
+-  icreate.icondata.data.indirectsprite.spritearea = area;
++  icreate.icondata.data.indirectsprite.name = DL_PTR (iconname);
++  icreate.icondata.data.indirectsprite.spritearea = DL_PTR (area);
+   icreate.icondata.data.indirectsprite.nameisname = wimp_MAXNAME;
+ 
+   icreate.icondata.workarearect.min.x =
+diff -ruN --text a/Libraries/Icon/DisposeInd.c b/Libraries/Icon/DisposeInd.c
+--- a/Libraries/Icon/DisposeInd.c	2026-10-24 12:46:48.141795500 +0100
++++ b/Libraries/Icon/DisposeInd.c	2026-10-24 12:46:48.152661520 +0100
+@@ -30,17 +30,17 @@
+   if (!flags.data.text && flags.data.sprite)             /* Sprite only icon */
+   {
+     if (data->indirectsprite.nameisname)
+-      free((void *)(int)data->indirectsprite.name);
++      free(DL_P (data->indirectsprite.name));
+     return;
+   }
+ 
+   if (flags.data.text || flags.data.sprite)        /* Text/Text&Sprite icon */
+   {
+-    free(data->indirecttext.buffer);
++    free(DL_P (data->indirecttext.buffer));
+ 
+     /* Free validation string, if there is one */
+-    if ((data->indirecttext.validstring != NULL) &&
+-        (data->indirecttext.validstring != (char *) 0xffffffff))
+-      free(data->indirecttext.validstring);
++    if ((data->indirecttext.validstring != 0) &&
++        (data->indirecttext.validstring != 0xffffffffu))
++      free(DL_P (data->indirecttext.validstring));
+   }
+ }
+diff -ruN --text a/Libraries/Icon/FileIcon.c b/Libraries/Icon/FileIcon.c
+--- a/Libraries/Icon/FileIcon.c	2026-10-24 12:46:48.141811346 +0100
++++ b/Libraries/Icon/FileIcon.c	2026-10-24 12:46:48.152676498 +0100
+@@ -40,12 +40,12 @@
+   Wimp_DeleteIcon(window, icon);
+ 
+   /* Put sprite name in name field */
+-  snprintf((char *)(int)iconcreate.icondata.data.indirectsprite.name,
++  snprintf((char *)(intptr_t)((char *) DL_P (iconcreate.icondata.data.indirectsprite.name)),
+            iconcreate.icondata.data.indirectsprite.nameisname,
+            "file_%03x", filetype);
+ 
+   /* Fill in sprite area */
+-  iconcreate.icondata.data.indirectsprite.spritearea = (unsigned int *) 1;
++  iconcreate.icondata.data.indirectsprite.spritearea = DL_PTR ((unsigned int *) 1);
+ 
+   /* Fill in sprite name length */
+   iconcreate.icondata.data.indirectsprite.nameisname = 8; /* file_xxx */
+diff -ruN --text a/Libraries/Icon/GetBgCol.c b/Libraries/Icon/GetBgCol.c
+--- a/Libraries/Icon/GetBgCol.c	2026-10-24 12:46:48.141850051 +0100
++++ b/Libraries/Icon/GetBgCol.c	2026-10-24 12:46:48.152705569 +0100
+@@ -28,7 +28,7 @@
+     return icon->flags.data.background;
+ 
+   /* Icon is anti-aliased - read font validation string colours */
+-  colour = Validation_ScanString(icon->data.indirecttext.validstring,
++  colour = Validation_ScanString(((char *) DL_P (icon->data.indirecttext.validstring)),
+                                  iconvalid_FONTCOLOURS);
+ 
+   /* No colours specified - use default */
+@@ -36,7 +36,7 @@
+     return colour_WHITE;
+ 
+   /* Decode first colour digit */
+-  colour = Str_DecodeHex(icon->data.indirecttext.validstring[colour]);
++  colour = Str_DecodeHex(((char *) DL_P (icon->data.indirecttext.validstring))[colour]);
+ 
+   /* Limit to legal value */
+   if (colour == -1)
+diff -ruN --text a/Libraries/Icon/GetDouble.c b/Libraries/Icon/GetDouble.c
+--- a/Libraries/Icon/GetDouble.c	2026-10-24 12:46:48.141870397 +0100
++++ b/Libraries/Icon/GetDouble.c	2026-10-24 12:46:48.152719938 +0100
+@@ -16,7 +16,7 @@
+ 
+   Wimp_GetIconState(w, i, &istate);
+   if (istate.flags.value & (icon_TEXT | icon_INDIRECTED))
+-    return(atof(istate.data.indirecttext.buffer));
++    return(atof(((char *) DL_P (istate.data.indirecttext.buffer))));
+ 
+   return(0);
+ }
+diff -ruN --text a/Libraries/Icon/GetFgCol.c b/Libraries/Icon/GetFgCol.c
+--- a/Libraries/Icon/GetFgCol.c	2026-10-24 12:46:48.141890688 +0100
++++ b/Libraries/Icon/GetFgCol.c	2026-10-24 12:46:48.152734294 +0100
+@@ -29,7 +29,7 @@
+     return icon->flags.data.foreground;
+ 
+   /* Icon is anti-aliased - read font validation string colours */
+-  colour = Validation_ScanString(icon->data.indirecttext.validstring,
++  colour = Validation_ScanString(((char *) DL_P (icon->data.indirecttext.validstring)),
+                                  iconvalid_FONTCOLOURS);
+ 
+   /* No colours specified - use default */
+@@ -37,7 +37,7 @@
+     return colour_BLACK;
+ 
+   /* Decode second colour digit */
+-  colour = Str_DecodeHex(icon->data.indirecttext.validstring[colour+1]);
++  colour = Str_DecodeHex(((char *) DL_P (icon->data.indirecttext.validstring))[colour+1]);
+ 
+   /* Limit to legal value */
+   if (colour == -1)
+diff -ruN --text a/Libraries/Icon/GetInteger.c b/Libraries/Icon/GetInteger.c
+--- a/Libraries/Icon/GetInteger.c	2026-10-24 12:46:48.141904778 +0100
++++ b/Libraries/Icon/GetInteger.c	2026-10-24 12:46:48.152749338 +0100
+@@ -16,7 +16,7 @@
+ 
+   Wimp_GetIconState(w, i, &istate);
+   if (istate.flags.value & (icon_TEXT | icon_INDIRECTED))
+-    return(atoi(istate.data.indirecttext.buffer));
++    return(atoi(((char *) DL_P (istate.data.indirecttext.buffer))));
+ 
+   return(0);
+ }
+diff -ruN --text a/Libraries/Icon/GetText.c b/Libraries/Icon/GetText.c
+--- a/Libraries/Icon/GetText.c	2026-10-24 12:46:48.141950703 +0100
++++ b/Libraries/Icon/GetText.c	2026-10-24 12:46:48.152811004 +0100
+@@ -40,10 +40,10 @@
+   if (istate.flags.data.indirected)
+   {
+     if (istate.flags.data.sprite)
+-        buffer = istate.data.indirectsprite.name;
++        buffer = ((char *) DL_P (istate.data.indirectsprite.name));
+     else
+     {
+-      buffer = istate.data.indirecttext.buffer;
++      buffer = ((char *) DL_P (istate.data.indirecttext.buffer));
+       len    = istate.data.indirecttext.bufflen;
+     }
+   }
+diff -ruN --text a/Libraries/Icon/GetTextPtr.c b/Libraries/Icon/GetTextPtr.c
+--- a/Libraries/Icon/GetTextPtr.c	2026-10-24 12:46:48.141965685 +0100
++++ b/Libraries/Icon/GetTextPtr.c	2026-10-24 12:46:48.152826400 +0100
+@@ -30,7 +30,7 @@
+ 
+   if (iconblk.flags.value & icon_INDIRECTED)
+   {
+-    return iconblk.data.indirecttext.buffer;
++    return ((char *) DL_P (iconblk.data.indirecttext.buffer));
+   }
+ 
+   return NULL;
+diff -ruN --text a/Libraries/Icon/printf.c b/Libraries/Icon/printf.c
+--- a/Libraries/Icon/printf.c	2026-10-24 12:46:48.142358626 +0100
++++ b/Libraries/Icon/printf.c	2026-10-24 12:46:48.153479635 +0100
+@@ -44,9 +44,9 @@
+ 
+   va_start(argp,format);
+   vsnprintf(temp, sizeof(temp), format, argp);
+-  strncpy(istate.data.indirecttext.buffer, temp,
++  strncpy(((char *) DL_P (istate.data.indirecttext.buffer)), temp,
+           istate.data.indirecttext.bufflen - 1);
+-  istate.data.indirecttext.buffer[istate.data.indirecttext.bufflen - 1] = '\0';
++  ((char *) DL_P (istate.data.indirecttext.buffer))[istate.data.indirecttext.bufflen - 1] = '\0';
+   va_end(argp);
+   temp[sizeof(temp)-1] = '\0';
+ 
+@@ -54,7 +54,7 @@
+   Wimp_GetCaretPosition( &caret );
+   if ( caret.window == window && caret.icon == icon )
+   {
+-    len = strlen( istate.data.indirecttext.buffer );
++    len = strlen( ((char *) DL_P (istate.data.indirecttext.buffer)) );
+     if ( caret.index > len )
+     {
+       caret.index = len;
+diff -ruN --text a/Libraries/Icon/SetCaret.c b/Libraries/Icon/SetCaret.c
+--- a/Libraries/Icon/SetCaret.c	2026-10-24 12:46:48.142080818 +0100
++++ b/Libraries/Icon/SetCaret.c	2026-10-24 12:46:48.153120199 +0100
+@@ -29,7 +29,7 @@
+     if (istate.flags.data.indirected)
+     {
+       maxlen = istate.data.indirecttext.bufflen;
+-      buff   = istate.data.indirecttext.buffer;
++      buff   = ((char *) DL_P (istate.data.indirecttext.buffer));
+     }
+     else
+     {
+diff -ruN --text a/Libraries/Icon/SetText.c b/Libraries/Icon/SetText.c
+--- a/Libraries/Icon/SetText.c	2026-10-24 12:46:48.142207670 +0100
++++ b/Libraries/Icon/SetText.c	2026-10-24 12:46:48.153286066 +0100
+@@ -42,15 +42,15 @@
+   if (istate.flags.value & (icon_TEXT | icon_INDIRECTED))
+   {
+     /* Indirected text icon, so set text field - ensure no buffer overflow */
+-    strncpy(istate.data.indirecttext.buffer, text,
++    strncpy(((char *) DL_P (istate.data.indirecttext.buffer)), text,
+               istate.data.indirecttext.bufflen - 1);
+-    istate.data.indirecttext.buffer[istate.data.indirecttext.bufflen-1] = 0;
++    ((char *) DL_P (istate.data.indirecttext.buffer))[istate.data.indirecttext.bufflen-1] = 0;
+ 
+     /* Ensure caret isn't beyond end of text */
+     Wimp_GetCaretPosition( &caret );
+     if ( caret.window == w && caret.icon == i )
+     {
+-      len = strlen( istate.data.indirecttext.buffer );
++      len = strlen( ((char *) DL_P (istate.data.indirecttext.buffer)) );
+       if ( caret.index > len )
+       {
+         caret.index = len;
+diff -ruN --text a/Libraries/Icon/SetTextRJ.c b/Libraries/Icon/SetTextRJ.c
+--- a/Libraries/Icon/SetTextRJ.c	2026-10-24 12:46:48.142222842 +0100
++++ b/Libraries/Icon/SetTextRJ.c	2026-10-24 12:46:48.153305880 +0100
+@@ -33,7 +33,7 @@
+      */
+     register int  textlength = strlen(text) + 1 ;
+     register int  bufflength = istate.data.indirecttext.bufflen ;
+-    register char *buffer    = istate.data.indirecttext.buffer ;
++    register char *buffer    = ((char *) DL_P (istate.data.indirecttext.buffer)) ;
+     if ( bufflength < textlength )
+     {
+       text += textlength - bufflength ;
+@@ -49,7 +49,7 @@
+     Wimp_GetCaretPosition( &caret );
+     if ( caret.window == w && caret.icon == i )
+     {
+-      len = strlen( istate.data.indirecttext.buffer );
++      len = strlen( ((char *) DL_P (istate.data.indirecttext.buffer)) );
+       if ( caret.index > len )
+       {
+         caret.index = len;
+diff -ruN --text a/Libraries/Icon/Validation.c b/Libraries/Icon/Validation.c
+--- a/Libraries/Icon/Validation.c	2026-10-24 12:46:48.142322963 +0100
++++ b/Libraries/Icon/Validation.c	2026-10-24 12:46:48.153443597 +0100
+@@ -29,7 +29,7 @@
+ {
+   int index;
+ 
+-  if (string == NULL || (int)string == -1)
++  if (string == NULL || (intptr_t)string == -1)
+     return Icon_NoValidationCommand;
+ 
+   tag = tag & 255;
+diff -ruN --text a/Libraries/Menu/AddSubMenu.c b/Libraries/Menu/AddSubMenu.c
+--- a/Libraries/Menu/AddSubMenu.c	2026-10-24 12:46:48.142812883 +0100
++++ b/Libraries/Menu/AddSubMenu.c	2026-10-24 12:46:48.154212069 +0100
+@@ -20,7 +20,7 @@
+ 
+ void Menu_AddSubMenu(menu_ptr menu, int entry, menu_ptr submenu)
+ {
+-  menu_item *item = (menu_item*) (((int) menu) + sizeof(menu_block));
++  menu_item *item = (menu_item*) (((intptr_t) menu) + sizeof(menu_block));
+ 
+-  item[entry].submenu.menu = submenu;
++  item[entry].submenu.menu = DL_PTR (submenu);
+ }
+diff -ruN --text a/Libraries/Menu/AddSubWin.c b/Libraries/Menu/AddSubWin.c
+--- a/Libraries/Menu/AddSubWin.c	2026-10-24 12:46:48.142837264 +0100
++++ b/Libraries/Menu/AddSubWin.c	2026-10-24 12:46:48.154228480 +0100
+@@ -20,7 +20,7 @@
+ 
+ void Menu_AddSubWindow(menu_ptr menu, int entry, window_handle window)
+ {
+-  menu_item *item = (menu_item*) (((int) menu) + sizeof(menu_block));
++  menu_item *item = (menu_item*) (((intptr_t) menu) + sizeof(menu_block));
+ 
+   item[entry].submenu.window = window;
+ }
+diff -ruN --text a/Libraries/Menu/Colourmenu.c b/Libraries/Menu/Colourmenu.c
+--- a/Libraries/Menu/Colourmenu.c	2026-10-24 12:46:48.142856674 +0100
++++ b/Libraries/Menu/Colourmenu.c	2026-10-24 12:46:48.154238520 +0100
+@@ -30,82 +30,82 @@
+ 
+   menu = Menu_New(name, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15");
+ 
+-  item = (menu_item *) (((int) menu) + sizeof(menu_block));
++  item = (menu_item *) (((intptr_t) menu) + sizeof(menu_block));
+   item = &item[0];
+   item->iconflags.data.foreground = colour_BLACK;
+   item->iconflags.data.background = colour_WHITE;
+ 
+-  item = (menu_item *) (((int) menu) + sizeof(menu_block));
++  item = (menu_item *) (((intptr_t) menu) + sizeof(menu_block));
+   item = &item[1];
+   item->iconflags.data.foreground = colour_BLACK;
+   item->iconflags.data.background = colour_GREY1;
+ 
+-  item = (menu_item *) (((int) menu) + sizeof(menu_block));
++  item = (menu_item *) (((intptr_t) menu) + sizeof(menu_block));
+   item = &item[2];
+   item->iconflags.data.foreground = colour_BLACK;
+   item->iconflags.data.background = colour_GREY2;
+ 
+-  item = (menu_item *) (((int) menu) + sizeof(menu_block));
++  item = (menu_item *) (((intptr_t) menu) + sizeof(menu_block));
+   item = &item[3];
+   item->iconflags.data.foreground = colour_BLACK;
+   item->iconflags.data.background = colour_GREY3;
+ 
+-  item = (menu_item *) (((int) menu) + sizeof(menu_block));
++  item = (menu_item *) (((intptr_t) menu) + sizeof(menu_block));
+   item = &item[4];
+   item->iconflags.data.foreground = colour_BLACK;
+   item->iconflags.data.background = colour_GREY4;
+ 
+-  item = (menu_item *) (((int) menu) + sizeof(menu_block));
++  item = (menu_item *) (((intptr_t) menu) + sizeof(menu_block));
+   item = &item[5];
+   item->iconflags.data.foreground = colour_WHITE;
+   item->iconflags.data.background = colour_GREY5;
+ 
+-  item = (menu_item *) (((int) menu) + sizeof(menu_block));
++  item = (menu_item *) (((intptr_t) menu) + sizeof(menu_block));
+   item = &item[6];
+   item->iconflags.data.foreground = colour_WHITE;
+   item->iconflags.data.background = colour_GREY6;
+ 
+-  item = (menu_item *) (((int) menu) + sizeof(menu_block));
++  item = (menu_item *) (((intptr_t) menu) + sizeof(menu_block));
+   item = &item[7];
+   item->iconflags.data.foreground = colour_WHITE;
+   item->iconflags.data.background = colour_BLACK;
+ 
+-  item = (menu_item *) (((int) menu) + sizeof(menu_block));
++  item = (menu_item *) (((intptr_t) menu) + sizeof(menu_block));
+   item = &item[8];
+   item->iconflags.data.foreground = colour_WHITE;
+   item->iconflags.data.background = colour_DARK_BLUE;
+ 
+-  item = (menu_item *) (((int) menu) + sizeof(menu_block));
++  item = (menu_item *) (((intptr_t) menu) + sizeof(menu_block));
+   item = &item[9];
+   item->iconflags.data.foreground = colour_BLACK;
+   item->iconflags.data.background = colour_YELLOW;
+ 
+-  item = (menu_item *) (((int) menu) + sizeof(menu_block));
++  item = (menu_item *) (((intptr_t) menu) + sizeof(menu_block));
+   item = &item[10];
+   item->iconflags.data.foreground = colour_WHITE;
+   item->iconflags.data.background = colour_GREEN;
+ 
+-  item = (menu_item *) (((int) menu) + sizeof(menu_block));
++  item = (menu_item *) (((intptr_t) menu) + sizeof(menu_block));
+   item = &item[11];
+   item->iconflags.data.foreground = colour_WHITE;
+   item->iconflags.data.background = colour_RED;
+ 
+-  item = (menu_item *) (((int) menu) + sizeof(menu_block));
++  item = (menu_item *) (((intptr_t) menu) + sizeof(menu_block));
+   item = &item[12];
+   item->iconflags.data.foreground = colour_BLACK;
+   item->iconflags.data.background = colour_CREAM;
+ 
+-  item = (menu_item *) (((int) menu) + sizeof(menu_block));
++  item = (menu_item *) (((intptr_t) menu) + sizeof(menu_block));
+   item = &item[13];
+   item->iconflags.data.foreground = colour_WHITE;
+   item->iconflags.data.background = colour_ARMY_GREEN;
+ 
+-  item = (menu_item *) (((int) menu) + sizeof(menu_block));
++  item = (menu_item *) (((intptr_t) menu) + sizeof(menu_block));
+   item = &item[14];
+   item->iconflags.data.foreground = colour_BLACK;
+   item->iconflags.data.background = colour_ORANGE;
+ 
+-  item = (menu_item *) (((int) menu) + sizeof(menu_block));
++  item = (menu_item *) (((intptr_t) menu) + sizeof(menu_block));
+   item = &item[15];
+   item->iconflags.data.foreground = colour_BLACK;
+   item->iconflags.data.background = colour_LIGHT_BLUE;
+diff -ruN --text a/Libraries/Menu/Extend.c b/Libraries/Menu/Extend.c
+--- a/Libraries/Menu/Extend.c	2026-10-24 12:46:48.142875526 +0100
++++ b/Libraries/Menu/Extend.c	2026-10-24 12:46:48.154248477 +0100
+@@ -29,7 +29,7 @@
+   menu_ptr  newmenu;
+   unsigned int   maxwidth = 0;
+   unsigned int   newitems = 0, lastitem = 0;
+-  menu_item *item = (menu_item *) ((int) menu + sizeof(menu_block));
++  menu_item *item = (menu_item *) ((intptr_t) menu + sizeof(menu_block));
+ 
+   Menu__CountItems(description, &newitems, &maxwidth);
+ 
+@@ -43,9 +43,9 @@
+   newmenu = realloc((void *) menu, sizeof(menu_block) +
+                              (sizeof(menu_item) * (lastitem + 1 + newitems)));
+   if (newmenu == NULL)
+-    return((menu_ptr) Error_OutOfMemory(FALSE, "menus"));
++    return((menu_ptr)(intptr_t) Error_OutOfMemory(FALSE, "menus"));
+ 
+-  item = (menu_item *) ((int) newmenu + sizeof(menu_block));
++  item = (menu_item *) ((intptr_t) newmenu + sizeof(menu_block));
+   item[lastitem].menuflags.data.last = FALSE;
+ 
+   if (!Menu__Create(&item[lastitem + 1], description, newitems))
+diff -ruN --text a/Libraries/Menu/FullDispos.c b/Libraries/Menu/FullDispos.c
+--- a/Libraries/Menu/FullDispos.c	2026-10-24 12:46:48.142908609 +0100
++++ b/Libraries/Menu/FullDispos.c	2026-10-24 12:46:48.154272108 +0100
+@@ -18,7 +18,7 @@
+ 
+ #include "DeskLib:Menu.h"
+ 
+-#define ENTRY(menu) ((menu_item *) ((int) (menu) + sizeof(menu_block)))
++#define ENTRY(menu) ((menu_item *) ((intptr_t) (menu) + sizeof(menu_block)))
+ 
+ 
+ void Menu_FullDispose(menu_ptr menu)
+@@ -28,7 +28,7 @@
+ 
+   /* Free title data if necessary */
+   if (items[0].menuflags.data.indtitle)
+-    free (((icon_data *)(void *)menu)->indirecttext.buffer);
++    free (DL_P (((icon_data *)(void *)menu)->indirecttext.buffer));
+     /* Menu_New makes title validation -1 */
+ 
+   /* Process entries */
+@@ -36,10 +36,10 @@
+   {
+     if (items[index].iconflags.data.indirected)
+     {
+-      free(items[index].icondata.indirecttext.buffer);
++      free(((char *) DL_P (items[index].icondata.indirecttext.buffer)));
+ 
+-      if ((int) items[index].icondata.indirecttext.validstring > 0)
+-        free(items[index].icondata.indirecttext.validstring);
++      if ((intptr_t) ((char *) DL_P (items[index].icondata.indirecttext.validstring)) > 0)
++        free(((char *) DL_P (items[index].icondata.indirecttext.validstring)));
+     }
+ 
+     if (items[index].menuflags.data.last)
+diff -ruN --text a/Libraries/Menu/GetFlags.c b/Libraries/Menu/GetFlags.c
+--- a/Libraries/Menu/GetFlags.c	2026-10-24 12:46:48.142923043 +0100
++++ b/Libraries/Menu/GetFlags.c	2026-10-24 12:46:48.154282488 +0100
+@@ -19,7 +19,7 @@
+ 
+ void Menu_GetFlags(menu_ptr menu, int entry, int *ticked, int *shaded)
+ {
+-  menu_item *item = (menu_item *) (((int) menu) + sizeof(menu_block));
++  menu_item *item = (menu_item *) (((intptr_t) menu) + sizeof(menu_block));
+ 
+   item = &item[entry];
+   if(ticked)
+diff -ruN --text a/Libraries/Menu/GetText.c b/Libraries/Menu/GetText.c
+--- a/Libraries/Menu/GetText.c	2026-10-24 12:46:48.142938134 +0100
++++ b/Libraries/Menu/GetText.c	2026-10-24 12:46:48.154292397 +0100
+@@ -24,12 +24,12 @@
+ char *Menu_GetText(menu_ptr menu, int entry)
+ {
+   char      *text;
+-  menu_item *item = (menu_item*) (((int) menu) + sizeof(menu_block));
++  menu_item *item = (menu_item*) (((intptr_t) menu) + sizeof(menu_block));
+ 
+   item = &item[entry];
+ 
+   if (item->iconflags.data.indirected)
+-    text = item->icondata.indirecttext.buffer;
++    text = ((char *) DL_P (item->icondata.indirecttext.buffer));
+   else
+     text = item->icondata.text;
+ 
+diff -ruN --text a/Libraries/Menu/MakeIndrct.c b/Libraries/Menu/MakeIndrct.c
+--- a/Libraries/Menu/MakeIndrct.c	2026-10-24 12:46:48.142953988 +0100
++++ b/Libraries/Menu/MakeIndrct.c	2026-10-24 12:46:48.154305957 +0100
+@@ -37,14 +37,14 @@
+  *  entered.
+  */
+ {
+-  menu_item *item = (menu_item *) (((int) menu) + sizeof(menu_block));
++  menu_item *item = (menu_item *) (((intptr_t) menu) + sizeof(menu_block));
+ 
+   item = &item[entry];
+   item->iconflags.data.indirected = TRUE;
+ 
+-  item->icondata.indirecttext.buffer      = buffer;
++  item->icondata.indirecttext.buffer = DL_PTR (buffer);
+   item->icondata.indirecttext.bufflen     = size;
+-  item->icondata.indirecttext.validstring = (char *) -1;
++  item->icondata.indirecttext.validstring = DL_PTR ((char *) -1);
+ 
+ }
+ 
+diff -ruN --text a/Libraries/Menu/MakeWrite.c b/Libraries/Menu/MakeWrite.c
+--- a/Libraries/Menu/MakeWrite.c	2026-10-24 12:46:48.142969207 +0100
++++ b/Libraries/Menu/MakeWrite.c	2026-10-24 12:46:48.154315581 +0100
+@@ -23,13 +23,13 @@
+ void Menu_MakeWritable(menu_ptr menu, int entry,
+                        char *buffer, int size, char *valid)
+ {
+-  menu_item *item = (menu_item *) (((int) menu) + sizeof(menu_block));
++  menu_item *item = (menu_item *) (((intptr_t) menu) + sizeof(menu_block));
+ 
+   item = &item[entry];
+   item->menuflags.data.writable   = TRUE;
+   item->iconflags.data.indirected = TRUE;
+ 
+-  item->icondata.indirecttext.buffer      = buffer;
++  item->icondata.indirecttext.buffer = DL_PTR (buffer);
+   item->icondata.indirecttext.bufflen     = size;
+-  item->icondata.indirecttext.validstring = valid;
++  item->icondata.indirecttext.validstring = DL_PTR (valid);
+ }
+diff -ruN --text a/Libraries/Menu/NewEmpty.c b/Libraries/Menu/NewEmpty.c
+--- a/Libraries/Menu/NewEmpty.c	2026-10-24 12:46:48.143000945 +0100
++++ b/Libraries/Menu/NewEmpty.c	2026-10-24 12:46:48.154334441 +0100
+@@ -79,8 +79,8 @@
+ 
+     /* We now treat the menu title as a text icon block */
+     titleicon = (icon_data *)(void *)&menu->title;
+-    titleicon->indirecttext.buffer = titletext;
+-    titleicon->indirecttext.validstring = (char *) -1;
++    titleicon->indirecttext.buffer = DL_PTR (titletext);
++    titleicon->indirecttext.validstring = (dl_ptr) -1;
+     titleicon->indirecttext.bufflen = titlelen + 1;
+ 
+     /* Copy the text */
+diff -ruN --text a/Libraries/Menu/NewMenu.c b/Libraries/Menu/NewMenu.c
+--- a/Libraries/Menu/NewMenu.c	2026-10-24 12:46:48.143021157 +0100
++++ b/Libraries/Menu/NewMenu.c	2026-10-24 12:46:48.154345505 +0100
+@@ -150,18 +150,18 @@
+     {
+       /* Copy text into indirected menu item */
+       it->iconflags.data.indirected = TRUE;
+-      it->icondata.indirecttext.buffer = malloc(index + 1);
+-      if (it->icondata.indirecttext.buffer == NULL)
++      it->icondata.indirecttext.buffer = DL_PTR (malloc(index + 1));
++      if (((char *) DL_P (it->icondata.indirecttext.buffer)) == NULL)
+         return(Error_OutOfMemory(FALSE, "menus"));
+ 
+       it->icondata.indirecttext.bufflen = index + 1;
+-      it->icondata.indirecttext.validstring = (char *) -1;
++      it->icondata.indirecttext.validstring = DL_PTR ((char *) -1);
+ 
+-      t = it->icondata.indirecttext.buffer;
++      t = ((char *) DL_P (it->icondata.indirecttext.buffer));
+     }
+ 
+     {
+-      char **cst_t = (void *)(int)&t;
++      char **cst_t = (void *)(intptr_t)&t;
+ 
+       while (*s != 0 && *s != ',' && *s != '|')
+         *(*cst_t)++ = *s++;
+@@ -205,7 +205,7 @@
+   menu = (menu_ptr) malloc(sizeof(menu_block) + (numitems * sizeof(menu_item)));
+ 
+   if (menu == NULL)
+-    return((menu_ptr) Error_OutOfMemory(FALSE, "menus"));
++    return((menu_ptr)(intptr_t) Error_OutOfMemory(FALSE, "menus"));
+ 
+   item = (menu_item *) &(menu[1]);
+ 
+@@ -235,12 +235,12 @@
+       return (menu);
+     strcpy(titledata,title);
+     titleicon = (icon_data *)(void *)&menu->title;
+-    titleicon->indirecttext.buffer = titledata;
+-    titleicon->indirecttext.validstring = (char *) -1;
++    titleicon->indirecttext.buffer = DL_PTR (titledata);
++    titleicon->indirecttext.validstring = (dl_ptr) -1;
+     titleicon->indirecttext.bufflen = titlelen;
+ 
+     /* Set flag in first item to inicate indirected title */
+-    firstitem = (menu_item *) ((int) menu + sizeof(menu_block));
++    firstitem = (menu_item *) ((intptr_t) menu + sizeof(menu_block));
+     firstitem->menuflags.data.indtitle = 1;
+ 
+     /* Make sure it is wide enough for indirected title  */
+diff -ruN --text a/Libraries/Menu/RemItem.c b/Libraries/Menu/RemItem.c
+--- a/Libraries/Menu/RemItem.c	2026-10-24 12:46:48.143073930 +0100
++++ b/Libraries/Menu/RemItem.c	2026-10-24 12:46:48.154381478 +0100
+@@ -22,7 +22,7 @@
+ 
+ void Menu_RemoveItem(menu_ptr menu, int entry)
+ {
+-  menu_item *item = (menu_item *)(((int)menu) + sizeof(menu_block));
++  menu_item *item = (menu_item *)(((intptr_t)menu) + sizeof(menu_block));
+ 
+   if (item->menuflags.data.last)
+     return;
+diff -ruN --text a/Libraries/Menu/ReviseWdth.c b/Libraries/Menu/ReviseWdth.c
+--- a/Libraries/Menu/ReviseWdth.c	2026-10-24 12:46:48.143088778 +0100
++++ b/Libraries/Menu/ReviseWdth.c	2026-10-24 12:46:48.154392480 +0100
+@@ -37,11 +37,11 @@
+ {
+   int                   width, maxwidth=0;
+   BOOL                  last = FALSE;
+-  menu_item   *item = (menu_item *) (((int) menu) + sizeof(menu_block));
++  menu_item   *item = (menu_item *) (((intptr_t) menu) + sizeof(menu_block));
+ 
+   do {
+     if (item->iconflags.data.indirected) {
+-      width = strlen(item->icondata.indirecttext.buffer);
++      width = strlen(((char *) DL_P (item->icondata.indirecttext.buffer)));
+     }
+     else {
+       width = strlen(item->icondata.text);
+diff -ruN --text a/Libraries/Menu/SetFlags.c b/Libraries/Menu/SetFlags.c
+--- a/Libraries/Menu/SetFlags.c	2026-10-24 12:46:48.143103404 +0100
++++ b/Libraries/Menu/SetFlags.c	2026-10-24 12:46:48.154403534 +0100
+@@ -20,7 +20,7 @@
+ 
+ void Menu_SetFlags(menu_ptr menu, int entry, int ticked, int shaded)
+ {
+-  menu_item *item = (menu_item *) (((int) menu) + sizeof(menu_block));
++  menu_item *item = (menu_item *) (((intptr_t) menu) + sizeof(menu_block));
+ 
+   item = &item[entry];
+   item->menuflags.data.ticked = ticked;
+diff -ruN --text a/Libraries/Menu/SetText.c b/Libraries/Menu/SetText.c
+--- a/Libraries/Menu/SetText.c	2026-10-24 12:46:48.143118619 +0100
++++ b/Libraries/Menu/SetText.c	2026-10-24 12:46:48.154416663 +0100
+@@ -25,7 +25,7 @@
+ {
+   int       length, oldlength;
+   char      *dest;
+-  menu_item *item = (menu_item*) (((int) menu) + sizeof(menu_block));
++  menu_item *item = (menu_item*) (((intptr_t) menu) + sizeof(menu_block));
+ 
+   item = &item[entry];
+ 
+@@ -44,14 +44,14 @@
+   if ((length = strlen(text)) >= oldlength)
+   {
+     if (item->iconflags.data.indirected)
+-      free(item->icondata.indirecttext.buffer);
++      free(((char *) DL_P (item->icondata.indirecttext.buffer)));
+ 
+-    item->icondata.indirecttext.buffer = malloc(length + 1);
+-    if (item->icondata.indirecttext.buffer != NULL)
++    item->icondata.indirecttext.buffer = DL_PTR (malloc(length + 1));
++    if (((char *) DL_P (item->icondata.indirecttext.buffer)) != NULL)
+     {
+       item->iconflags.data.indirected         = TRUE;
+       item->icondata.indirecttext.bufflen     = length + 1;
+-      item->icondata.indirecttext.validstring = (char *) -1;
++      item->icondata.indirecttext.validstring = DL_PTR ((char *) -1);
+     }
+   }
+ 
+@@ -62,7 +62,7 @@
+   if (item->iconflags.data.indirected)
+   {
+     length = item->icondata.indirecttext.bufflen - 1;
+-    dest   = item->icondata.indirecttext.buffer;
++    dest   = ((char *) DL_P (item->icondata.indirecttext.buffer));
+   }
+   else
+   {
+diff -ruN --text a/Libraries/Menu/Show.c b/Libraries/Menu/Show.c
+--- a/Libraries/Menu/Show.c	2026-10-24 12:46:48.143135610 +0100
++++ b/Libraries/Menu/Show.c	2026-10-24 12:46:48.154425927 +0100
+@@ -28,7 +28,7 @@
+   int       itemheight, count = 0;
+   menu_item *item;
+ 
+-  item = (menu_item *) (((int) menu) + sizeof(menu_block));
++  item = (menu_item *) (((intptr_t) menu) + sizeof(menu_block));
+   itemheight = menu->height + menu->gap;
+ 
+   while(TRUE)
+diff -ruN --text a/Libraries/Save/Save.c b/Libraries/Save/Save.c
+--- a/Libraries/Save/Save.c	2026-10-24 12:46:48.144424000 +0100
++++ b/Libraries/Save/Save.c	2026-10-24 12:46:48.155376048 +0100
+@@ -72,7 +72,7 @@
+   icon_block iconblock;
+ 
+   Wimp_GetIconState(window, icon, &iconblock);
+-  Str_MakeASCIIZ(iconblock.data.indirecttext.buffer,
++  Str_MakeASCIIZ(((char *) DL_P (iconblock.data.indirecttext.buffer)),
+                  iconblock.data.indirecttext.bufflen-1);
+ }
+ 
+@@ -125,11 +125,11 @@
+   char           *filename;
+ 
+   Wimp_GetIconState(saveblock->window, saveblock->filenameicon, &iconblock);
+-  filename = iconblock.data.indirecttext.buffer;
++  filename = ((char *) DL_P (iconblock.data.indirecttext.buffer));
+ 
+   if(LeafName(filename) != filename)    /* not just a leafname in icon */
+   {
+-    Save__SaveDataToFilename(iconblock.data.indirecttext.buffer, saveblock);
++    Save__SaveDataToFilename(((char *) DL_P (iconblock.data.indirecttext.buffer)), saveblock);
+     Save__ResetSaveBlock(saveblock);
+ 
+     if((event->type == event_CLICK && event->data.mouse.button.data.select) ||
+@@ -304,7 +304,7 @@
+ 
+     byteswritten = (saveblock->ramsaver)(event_taskhandle, saveblock->ref,
+                                          msg->header.sender,
+-                                         msg->data.ramfetch.buffer,
++                                         ((char *) DL_P (msg->data.ramfetch.buffer)),
+                                          msg->data.ramfetch.buffsize,
+                                          saveblock->ram_progress);
+ 
+diff -ruN --text a/Libraries/Str/LeafName.c b/Libraries/Str/LeafName.c
+--- a/Libraries/Str/LeafName.c	2026-10-24 12:46:48.145440702 +0100
++++ b/Libraries/Str/LeafName.c	2026-10-24 12:46:48.156654095 +0100
+@@ -32,12 +32,12 @@
+ 
+ extern char *Str_LeafName(const char *path)
+ {
+-  char *leaf = (char *)(int)path, ch = '.';
++  char *leaf = (char *) path, ch = '.';
+ 
+   do
+   {
+     if (ch == '.' || ch == ':')
+-      leaf =  (char *)(int)path;
++      leaf =  (char *) path;
+   }
+   while ( (ch = *(path++)) != '\0') ;
+ 
+diff -ruN --text a/Libraries/Template/ClearAll.c b/Libraries/Template/ClearAll.c
+--- a/Libraries/Template/ClearAll.c	2026-10-24 12:46:48.145668172 +0100
++++ b/Libraries/Template/ClearAll.c	2026-10-24 12:46:48.156752821 +0100
+@@ -48,6 +48,6 @@
+ 
+   LinkList_Init(&template_list);         /* just to be on the safe side! */
+ 
+-  if ((int) template_fontarray > 0)
++  if ((intptr_t) template_fontarray > 0)
+     Font_LoseAllFonts(template_fontarray);
+ }
+diff -ruN --text a/Libraries/Template/Clone.c b/Libraries/Template/Clone.c
+--- a/Libraries/Template/Clone.c	2026-10-24 12:46:48.145680780 +0100
++++ b/Libraries/Template/Clone.c	2026-10-24 12:46:48.156767148 +0100
+@@ -54,46 +54,46 @@
+     else if (maxtitlesize < 1)
+       maxtitlesize = 260;                         /* default ind. title size */
+ 
+-    window->title.indirecttext.buffer  = (char *) malloc(maxtitlesize);
++    window->title.indirecttext.buffer = DL_PTR ((char *) malloc(maxtitlesize));
+     window->title.indirecttext.bufflen = maxtitlesize;
+-    if (window->title.indirecttext.buffer == NULL)
++    if (((char *) DL_P (window->title.indirecttext.buffer)) == NULL)
+       Error_ReportFatalInternal(ERR1, ERRMESS1);
+ 
+-    strncpy(window->title.indirecttext.buffer,
+-            t->windowdef->title.indirecttext.buffer,
++    strncpy(((char *) DL_P (window->title.indirecttext.buffer)),
++            ((char *) DL_P (t->windowdef->title.indirecttext.buffer)),
+             window->title.indirecttext.bufflen-1);
+-    window->title.indirecttext.buffer[window->title.indirecttext.bufflen-1] =0;
++    ((char *) DL_P (window->title.indirecttext.buffer))[window->title.indirecttext.bufflen-1] =0;
+   }
+ 
+-  icons = (icon_block *) ((int)window + sizeof(window_block));
++  icons = (icon_block *) ((intptr_t)window + sizeof(window_block));
+   for (icon = 0; icon < t->windowdef->numicons; icon++)
+   {
+     if (icons[icon].flags.data.indirected && icons[icon].flags.data.text)
+     {
+-      char *oldtext = icons[icon].data.indirecttext.buffer;
++      char *oldtext = ((char *) DL_P (icons[icon].data.indirecttext.buffer));
+ 
+-      icons[icon].data.indirecttext.buffer = (char *)
+-                                malloc(icons[icon].data.indirecttext.bufflen);
+-      if (icons[icon].data.indirecttext.buffer == NULL)
++      icons[icon].data.indirecttext.buffer = DL_PTR (
++                                malloc(icons[icon].data.indirecttext.bufflen));
++      if (((char *) DL_P (icons[icon].data.indirecttext.buffer)) == NULL)
+         Error_ReportFatalInternal(ERR1, ERRMESS1);
+ 
+-      strncpy(icons[icon].data.indirecttext.buffer,
++      strncpy(((char *) DL_P (icons[icon].data.indirecttext.buffer)),
+               oldtext, icons[icon].data.indirecttext.bufflen - 1);
+-      icons[icon].data.indirecttext.buffer[
++      ((char *) DL_P (icons[icon].data.indirecttext.buffer))[
+                icons[icon].data.indirecttext.bufflen - 1] = 0;
+ 
+-      oldtext = icons[icon].data.indirecttext.validstring;
+-      if ((int)oldtext > 0)
++      oldtext = ((char *) DL_P (icons[icon].data.indirecttext.validstring));
++      if ((intptr_t)oldtext > 0)
+       {
+         int size;
+ 
+         size = strlencr(oldtext);
+-        icons[icon].data.indirecttext.validstring = (char *) malloc(size + 1);
+-        if (icons[icon].data.indirecttext.validstring == NULL)
++        icons[icon].data.indirecttext.validstring = DL_PTR ((char *) malloc(size + 1));
++        if (((char *) DL_P (icons[icon].data.indirecttext.validstring)) == NULL)
+           Error_ReportFatalInternal(ERR1, ERRMESS1);
+ 
+-        strncpy(icons[icon].data.indirecttext.validstring, oldtext, size);
+-        icons[icon].data.indirecttext.validstring[size] = 0;
++        strncpy(((char *) DL_P (icons[icon].data.indirecttext.validstring)), oldtext, size);
++        ((char *) DL_P (icons[icon].data.indirecttext.validstring))[size] = 0;
+       }
+     }
+   }
+diff -ruN --text a/Libraries/Template/Delete.c b/Libraries/Template/Delete.c
+--- a/Libraries/Template/Delete.c	2026-10-24 12:46:48.145688838 +0100
++++ b/Libraries/Template/Delete.c	2026-10-24 12:46:48.156777816 +0100
+@@ -28,7 +28,7 @@
+   if (t == NULL)
+     return;
+ 
+-  free(&(t->windowdef));
++  free(t->windowdef);
+   free(t->indirectdata);
+ 
+   LinkList_Unlink(&template_list, &(t->header));
+diff -ruN --text a/Libraries/Template/Find.c b/Libraries/Template/Find.c
+--- a/Libraries/Template/Find.c	2026-10-24 12:46:48.145697045 +0100
++++ b/Libraries/Template/Find.c	2026-10-24 12:46:48.156787876 +0100
+@@ -42,7 +42,7 @@
+         /*
+          * Make this window's sprite area point to the required sprite area.
+          */
+-        t->windowdef->spritearea = (void *) __template_spritearea;
++        t->windowdef->spritearea = DL_PTR (__template_spritearea);
+       }
+       return(t);
+     }
+diff -ruN --text a/Libraries/Template/Free.c b/Libraries/Template/Free.c
+--- a/Libraries/Template/Free.c	2026-10-24 12:46:48.145705315 +0100
++++ b/Libraries/Template/Free.c	2026-10-24 12:46:48.156797487 +0100
+@@ -29,16 +29,16 @@
+ 
+   window = *windowdef;
+   if (window->titleflags.data.indirected)
+-    free(window->title.indirecttext.buffer);
++    free(((char *) DL_P (window->title.indirecttext.buffer)));
+ 
+-  icons = (icon_block *) ((int)window + sizeof(window_block));
++  icons = (icon_block *) ((intptr_t)window + sizeof(window_block));
+   for (icon = 0; icon < window->numicons; icon++)
+   {
+     if (icons[icon].flags.data.indirected && icons[icon].flags.data.text)
+     {
+-      free(icons[icon].data.indirecttext.buffer);
+-      if ((int) icons[icon].data.indirecttext.validstring > 0)
+-        free(icons[icon].data.indirecttext.validstring);
++      free(((char *) DL_P (icons[icon].data.indirecttext.buffer)));
++      if ((intptr_t) ((char *) DL_P (icons[icon].data.indirecttext.validstring)) > 0)
++        free(((char *) DL_P (icons[icon].data.indirecttext.validstring)));
+     }
+   }
+ 
+diff -ruN --text a/Libraries/Template/LinkSprite.c b/Libraries/Template/LinkSprite.c
+--- a/Libraries/Template/LinkSprite.c	2026-10-24 12:46:48.145723582 +0100
++++ b/Libraries/Template/LinkSprite.c	2026-10-24 12:46:48.156819052 +0100
+@@ -33,7 +33,7 @@
+ 
+   wblock = Template_Find(identifier);
+   if (wblock != NULL)
+-    wblock->spritearea = area;
++    wblock->spritearea = DL_PTR (area);
+ }
+ 
+ /***************************************************************************/
+diff -ruN --text a/Libraries/Template/LoadFile.c b/Libraries/Template/LoadFile.c
+--- a/Libraries/Template/LoadFile.c	2026-10-24 12:46:48.145733695 +0100
++++ b/Libraries/Template/LoadFile.c	2026-10-24 12:46:48.156829358 +0100
+@@ -140,21 +140,21 @@
+  *  to more than 5kB (unlikely unless you are being very antisocial towards
+  *  Mr. Wimp)
+  */
+-    tblock.buffer   = tptr->windowdef;
+-    tblock.workfree = tempdata;
++    tblock.buffer   = DL_PTR (tptr->windowdef);
++    tblock.workfree = DL_PTR (tempdata);
+     tblock.workend  = tblock.workfree + 5188;
+ 
+     /* The following line has been changed. If the font array was not passed
+      * in here as well, the fonts were not handled at all...
+      */
+-    tblock.font     = template_fontarray;   /* was  (font_array *) -1 */
++    tblock.font     = DL_PTR (template_fontarray);   /* was  (font_array *) -1 */
+     strncpy(tempname, tptr->identifier, sizeof(tempname)-1);
+     tempname[sizeof(tempname) - 1] = '\0';
+-    tblock.name     = tempname;
++    tblock.name     = DL_PTR (tempname);
+     tblock.index    = 0;
+     Wimp_LoadTemplate(&tblock);
+ 
+-    tptr->indirectsize = (tblock.workfree - tempdata) + 4;
++    tptr->indirectsize = (tblock.workfree - DL_PTR (tempdata)) + 4;
+     tptr->indirectdata = (char *) malloc(tptr->indirectsize);
+     if (tptr->indirectdata == NULL)
+     {
+@@ -166,13 +166,13 @@
+  *  and quick, as the previous load should have cached the data in a buffer
+  *  so more disc reading is unlikely. (Though don't quote me on that! ;-)
+  */
+-    tblock.buffer   = tptr->windowdef;
+-    tblock.workfree = tptr->indirectdata;
++    tblock.buffer   = DL_PTR (tptr->windowdef);
++    tblock.workfree = DL_PTR (tptr->indirectdata);
+     tblock.workend  = tblock.workfree + tptr->indirectsize;
+-    tblock.font     = template_fontarray;
++    tblock.font     = DL_PTR (template_fontarray);
+     strncpy(tempname, tptr->identifier, sizeof(tempname)-1);
+     tempname[sizeof(tempname)-1] = '\0';
+-    tblock.name     = tempname;
++    tblock.name     = DL_PTR (tempname);
+     tblock.index    = 0;
+     Wimp_LoadTemplate(&tblock);
+ 
+diff -ruN --text a/Libraries/Template/UseOutFont.c b/Libraries/Template/UseOutFont.c
+--- a/Libraries/Template/UseOutFont.c	2026-10-24 12:46:48.145754193 +0100
++++ b/Libraries/Template/UseOutFont.c	2026-10-24 12:46:48.156848968 +0100
+@@ -23,7 +23,7 @@
+ static void Template_ExitHandler(void)
+ /*  Called on exit to clean up the fonts we're using */
+ {
+-  if ((int) template_fontarray > 0)
++  if ((intptr_t) template_fontarray > 0)
+     Font_LoseAllFonts(template_fontarray);
+ }
+ 
+@@ -35,7 +35,7 @@
+  *  without outline fonts.
+  */
+ {
+-  if ((int) template_fontarray > 0) return;
++  if ((intptr_t) template_fontarray > 0) return;
+ 
+   template_fontarray = malloc(sizeof(font_array));
+   if (template_fontarray == NULL)
+diff -ruN --text a/Libraries/Window/ModeChange.c b/Libraries/Window/ModeChange.c
+--- a/Libraries/Window/ModeChange.c	2026-10-24 12:46:48.146764978 +0100
++++ b/Libraries/Window/ModeChange.c	2026-10-24 12:46:48.157955084 +0100
+@@ -80,7 +80,7 @@
+   font_array      fontconvert;
+   int             i;
+ 
+-  if ((int)template_fontarray < 0)
++  if ((intptr_t)template_fontarray < 0)
+     return;                       /* You aren't using outline fonts, stupid! */
+ 
+   /*  Go through the template's font usage array...
+diff -ruN --text a/Libraries/Window/SetTitle.c b/Libraries/Window/SetTitle.c
+--- a/Libraries/Window/SetTitle.c	2026-10-24 12:46:48.146805328 +0100
++++ b/Libraries/Window/SetTitle.c	2026-10-24 12:46:48.157994351 +0100
+@@ -40,7 +40,7 @@
+   if (!info.block.titleflags.data.indirected)
+     return;                /* We can't set the title if it isn't indirected! */
+ 
+-  buffer  = info.block.title.indirecttext.buffer;
++  buffer  = ((char *) DL_P (info.block.title.indirecttext.buffer));
+   bufflen = info.block.title.indirecttext.bufflen - 1;
+ 
+   /* Copy the given string into the window's title bar string */
