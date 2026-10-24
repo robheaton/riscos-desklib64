@@ -35,8 +35,10 @@ All of DeskLib's C (about 270 files) and 259 veneers: 506 objects in `libDeskLib
 
 * **`menu2`** (a window that logs to a file): `Menu2_Create`, `Menu2_AttachMenu` (opened with the Menu button), ticked, shaded and dotted items, a static submenu and a dynamic one made by a function (a title and an item longer than twelve characters, so indirected), the flags function (called again by an Adjust click), the select functions with Select and Adjust, and the sub-menu function. The `Error` library: `Error_Report` with a formatted message, `Error_Check`, `Error_CheckSilent`; the error box is shown and each call returns after OK.
 
+* **`controls`** (two windows, a log file): radio icons (`Icon_SetRadios`, `Icon_WhichRadio`, `Icon_WhichRadioInEsg`), an option icon, `Icon_ShadeGroup`, `Icon_SelectGroup`, the IncDec handler (steps, limits), the old icon slider (`Icon_SetSlider` with clipping, `Icon_ReadSlider`, `Icon_DragSlider` and `Icon_UpdateSlider` while dragging), and the `Slider` library in a window that is redrawn by the program (`Slider_SetValue` with limits, `Slider_ReadValue`, the update function, `Slider_Drag` with the mouse). `Slider_Redraw` returns no error, but the drawing of the bar (it uses `OS_Plot`) was not confirmed on screen.
+
 ## Not run yet
-`Print` and `PDriver`, `Url`, `Tinct`, `Serial`. They compile, the veneers were translated or written from the assembler, and the structures have the OS layout, but nobody has run them. If something fails, please open an issue with the function and what happened.
+`Print` and `PDriver`, `Url`, `Tinct`, `Serial`, `Filter` (its handler is called with registers, so it needs an assembler-style entry point that has not been written), `TaskWindow` and `Kbd_GET`. They compile, the veneers were translated or written from the assembler, and the structures have the OS layout, but nobody has run them. If something fails, please open an issue with the function and what happened.
 
 ## Known limits
 * Arguments after the fourth to the translated veneers and structures passed by value are assumed to fit a 32-bit word (see docs/PORTING.md).

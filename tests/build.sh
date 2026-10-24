@@ -4,7 +4,7 @@ set -e
 HERE=$(cd "$(dirname "$0")" && pwd); R=$HERE/..
 TC=${1:-${TC:?give the tool chain folder as the first argument or in TC}}
 CC=$TC/bin/aarch64-riscos-gcc
-A=$R/dist/apps; mkdir -p "$A/!DLHello" "$A/!DLDemo2" "$A/!DLDialogs" "$A/!DLSave" "$A/!DLSprite" "$A/!DLPane" "$A/!DLFont" "$A/!DLFont3" "$A/!DLDrag" "$A/!DLClip" "$A/!DLMenu2"
+A=$R/dist/apps; mkdir -p "$A/!DLHello" "$A/!DLDemo2" "$A/!DLDialogs" "$A/!DLSave" "$A/!DLSprite" "$A/!DLPane" "$A/!DLFont" "$A/!DLFont3" "$A/!DLDrag" "$A/!DLClip" "$A/!DLMenu2" "$A/!DLControls"
 FLAGS="-munixlib -O2 -fsigned-char -I $R/dist/include"
 $CC $FLAGS "$HERE/hello/hello.c" "$R/dist/lib/libDeskLib64.a" -o "$A/!DLHello/!RunImage,ff8"
 cp "$HERE/hello/!Run,feb" "$HERE/hello/!Boot,feb" "$A/!DLHello/"
@@ -25,5 +25,6 @@ cp "$HERE/clip/!Run,feb" "$HERE/clip/!Boot,feb" "$HERE/clip/Paster,feb" "$A/!DLC
 $CC $FLAGS "$HERE/env/envtest.c" "$R/dist/lib/libDeskLib64.a" -o "$A/envtest,ff8"
 $CC $FLAGS "$HERE/misc/misctest.c" "$R/dist/lib/libDeskLib64.a" -o "$A/misctest,ff8"
 cp "$HERE/menu2/!Run,feb" "$HERE/menu2/!Boot,feb" "$A/!DLMenu2/"; $CC $FLAGS "$HERE/menu2/menu2.c" "$R/dist/lib/libDeskLib64.a" -o "$A/!DLMenu2/!RunImage,ff8"
+cp "$HERE/controls/!Run,feb" "$HERE/controls/!Boot,feb" "$A/!DLControls/"; $CC $FLAGS "$HERE/controls/controls.c" "$R/dist/lib/libDeskLib64.a" -o "$A/!DLControls/!RunImage,ff8"
 mkdir -p "$A/msgtest"; $CC $FLAGS "$HERE/msgs/msgtest.c" "$R/dist/lib/libDeskLib64.a" -o "$A/msgtest/msgtest,ff8"; cp "$HERE/msgs/Messages" "$A/msgtest/Messages,fff"; cp "$HERE/msgs/Msgs" "$A/msgtest/Msgs,fff"
-echo "built $A/!DLHello, !DLDemo2, !DLDialogs, !DLSave, !DLSprite, !DLPane, !DLFont, !DLFont3, !DLDrag, !DLClip, !DLMenu2, spritetest,ff8, filetest,ff8, colourtest,ff8, cleartest,ff8, envtest,ff8, misctest,ff8 and msgtest/"
+echo "built $A/!DLHello, !DLDemo2, !DLDialogs, !DLSave, !DLSprite, !DLPane, !DLFont, !DLFont3, !DLDrag, !DLClip, !DLMenu2, !DLControls, spritetest,ff8, filetest,ff8, colourtest,ff8, cleartest,ff8, envtest,ff8, misctest,ff8 and msgtest/"

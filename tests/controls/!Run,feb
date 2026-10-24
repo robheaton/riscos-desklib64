@@ -1,0 +1,3 @@
+| DeskLib64 controls test
+Set DLControls$Dir <Obey$Dir>
+Run <Obey$Dir>.!RunImage
