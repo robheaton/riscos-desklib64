@@ -10,11 +10,13 @@ All of DeskLib's C (about 270 files) and 259 veneers: 506 objects in `libDeskLib
 * **`dialogs`**: indirected writable, option and radio icons loaded from a template file; `Dialog2` as a static window, as a transient dialogue (`Dialog2_OpenDialogMenu`) and as a menu leaf (`Dialog2_OpenDialogMenuLeaf` from a `message_MENUWARN`); OK, Cancel, Return and Escape.
 * **`save`**: the `Save` library: a save box with a draggable file icon (an indirected sprite), saving by pathname with the OK button, and dragging the file icon to a Filer window (the DataSave protocol and the result handler).
 
+* **`sprite`**: `spritetest` (command line, 38 checks): `Sprite_InitArea`, `Create`, `ReadInfo`, `Select`, `WritePixel`, `ReadPixel`, `Copy`, `Rename`, `Delete`, `FlipX`, `FlipY`, `CreateMask`, `RemoveMask`, mask pixels, `ReadControl`, `Save` and `LoadFile`. `DLSprite` (a window): sprites made in code, `Sprite_Plot`, `PlotScaled`, `PlotMask`, `PlotGrey`, a sprite icon from a user sprite area (`indirectsprite` with `spritearea`), and `Sprite_Redirect`/`UnRedirect` with VDU output into a sprite. `Sprite_PlotGrey` is called, but what it draws depends on the operating system's SpriteExtend version, so it is not checked.
+
 ## Known problems
 * The older `Dialog` library (`Dialog_WaitForClick`) does not return in testing: the task stops receiving events. It has not been explained yet. `Dialog2` is not affected and is the one to use.
 
 ## Not run yet
-`DragASpr`, `Sprite` (OS_SpriteOp veneers), `Pane`, `Font` and the font menu, `Print` and `PDriver`, `Clear`, `Clipboard`, `Filing`/`File`, `Msgs`/`MsgTrans`, `Url`, `Tinct`, `Serial`, `ColourTran`. They compile, the veneers were translated or written from the assembler, and the structures have the OS layout, but nobody has run them. If something fails, please open an issue with the function and what happened.
+`DragASpr`, `Pane`, `Font` and the font menu, `Print` and `PDriver`, `Clear`, `Clipboard`, `Filing`/`File`, `Msgs`/`MsgTrans`, `Url`, `Tinct`, `Serial`, `ColourTran`. They compile, the veneers were translated or written from the assembler, and the structures have the OS layout, but nobody has run them. If something fails, please open an issue with the function and what happened.
 
 ## Known limits
 * Arguments after the fourth to the translated veneers and structures passed by value are assumed to fit a 32-bit word (see docs/PORTING.md).

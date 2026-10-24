@@ -1,0 +1,3 @@
+| DeskLib64 sprite test
+Set DLSprite$Dir <Obey$Dir>
+Run <Obey$Dir>.!RunImage

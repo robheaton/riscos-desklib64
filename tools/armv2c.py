@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """armv2c.py: translates DeskLib's small ARM assembler SWI veneers (AOF syntax, one or two functions per file) into C for AArch64 RISC OS 64.
 
-Usage: armv2c.py SRCDIR OUTDIR [HANDDIR]   (SRCDIR = the patched DeskLib source (build.sh: work/src); writes OUTDIR/<Library>/<file>.c, report.txt and review.txt; functions that HANDDIR/*.c defines are skipped)
+Usage: armv2c.py SRCDIR OUTDIR          (SRCDIR = desklib64/src; writes OUTDIR/<Library>/<file>.c and OUTDIR/report.txt)
 
 The registers r0-r15 become 64-bit variables, the flags N Z C V ints; a SWI calls swi_x with r0-r9 (the V flag is the error flag: r0 is then the error block pointer);
 loads and stores of words are 32 bit (the OS data structures are); the stack is an array so that the arguments after the fourth (on the stack in the ARM calling convention) are
@@ -286,12 +286,15 @@ def emit_function(f, equs, protos):
             if base == 'LDM' and md == 'FD': md = 'IA'
             if base == 'STM' and md == 'FD': md = 'DB'
             if md not in ('IA', 'DB'): raise Manual('ldm mode ' + md)
-            st = ''
             first = 0 if md == 'IA' else -4 * len(regs)
+            # the transfer addresses come from the value that the base register had before the instruction: if the base is in the list of an LDM, it must not be re-read after it has been loaded
+            inlist = base == 'LDM' and rn in regs
+            st = ' { uint64_t b_ = r[%d];' % rn if inlist else ''
             for k, rg in enumerate(regs):
                 if rg == 15: raise Manual('ldm pc')
-                a = '(r[%d] + %d)' % (rn, first + 4 * k)
+                a = ('(b_ + %d)' % (first + 4 * k)) if inlist else '(r[%d] + %d)' % (rn, first + 4 * k)
                 st += (' r[%d] = *(volatile uint32_t *) (uintptr_t) %s;' % (rg, a)) if base == 'LDM' else (' *(volatile uint32_t *) (uintptr_t) %s = (uint32_t) r[%d];' % (a, rg))
+            if inlist: st += ' }'
             if wbk: st += ' r[%d] += %d;' % (rn, (4 if md == 'IA' else -4) * len(regs))
             emit(st); continue
         raise Manual('instruction ' + mn)
@@ -356,16 +359,16 @@ def load_protos(incdir):
             protos[name] = (ret, ps2)
     return protos
 
-def hand_names(src, hd=None):
+def hand_names(src):
     names = set()
-    hd = hd or os.path.join(os.path.dirname(os.path.abspath(src)), 'hand')
+    hd = os.path.join(os.path.dirname(os.path.abspath(src)), 'hand')
     for f in glob.glob(os.path.join(hd, '*.c')):
         for m in re.finditer(r'^[A-Za-z_][\w \*]*?\b([A-Za-z_]\w*)\s*\(', open(f, encoding='latin-1').read(), re.M): names.add(m.group(1))
     return names
 
 def main():
     src, out = sys.argv[1], sys.argv[2]
-    hand = hand_names(src, sys.argv[3] if len(sys.argv) > 3 else None)
+    hand = hand_names(src)
     protos = load_protos(os.path.join(src, 'include'))
     protos.update(load_protos(os.path.join(src, 'oldinclude')))
     for k, v in EXTRA.items(): protos.setdefault(k, v)

@@ -11,7 +11,7 @@ os_error * Wimp_ForceRedraw (window_redrawblock * a1)
   (void) Z; (void) N; (void) C; (void) V;
   r[0] = DL_ARG (a1);
   sp -= 2; stk[sp + 0] = (uint32_t) r[4]; stk[sp + 1] = (uint32_t) r[14];
-   r[0] = *(volatile uint32_t *) (uintptr_t) (r[0] + 0); r[1] = *(volatile uint32_t *) (uintptr_t) (r[0] + 4); r[2] = *(volatile uint32_t *) (uintptr_t) (r[0] + 8); r[3] = *(volatile uint32_t *) (uintptr_t) (r[0] + 12); r[4] = *(volatile uint32_t *) (uintptr_t) (r[0] + 16);
+   { uint64_t b_ = r[0]; r[0] = *(volatile uint32_t *) (uintptr_t) (b_ + 0); r[1] = *(volatile uint32_t *) (uintptr_t) (b_ + 4); r[2] = *(volatile uint32_t *) (uintptr_t) (b_ + 8); r[3] = *(volatile uint32_t *) (uintptr_t) (b_ + 12); r[4] = *(volatile uint32_t *) (uintptr_t) (b_ + 16); }
   { uint64_t q[10]; unsigned long f; int i; for (i = 0; i < 10; i++) q[i] = r[i]; f = swi_f (0x600d1, q); V = f & 1; C = (f >> 1) & 1; Z = (f >> 2) & 1; N = (f >> 3) & 1; for (i = 0; i < 10; i++) r[i] = q[i]; }
   if (!V) { r[0] = (uint64_t)(int64_t)(0); }
    r[4] = stk[sp + 0]; sp += 2; return (os_error *) (uintptr_t) r[0];

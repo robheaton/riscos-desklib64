@@ -16,7 +16,7 @@ os_error * Wimp_BlockCopy (window_handle a1, wimp_box * a2, int a3, int a4)
   sp -= 4; stk[sp + 0] = (uint32_t) r[4]; stk[sp + 1] = (uint32_t) r[5]; stk[sp + 2] = (uint32_t) r[6]; stk[sp + 3] = (uint32_t) r[14];
   r[5] = r[2];
   r[6] = r[3];
-   r[1] = *(volatile uint32_t *) (uintptr_t) (r[1] + 0); r[2] = *(volatile uint32_t *) (uintptr_t) (r[1] + 4); r[3] = *(volatile uint32_t *) (uintptr_t) (r[1] + 8); r[4] = *(volatile uint32_t *) (uintptr_t) (r[1] + 12);
+   { uint64_t b_ = r[1]; r[1] = *(volatile uint32_t *) (uintptr_t) (b_ + 0); r[2] = *(volatile uint32_t *) (uintptr_t) (b_ + 4); r[3] = *(volatile uint32_t *) (uintptr_t) (b_ + 8); r[4] = *(volatile uint32_t *) (uintptr_t) (b_ + 12); }
   { uint64_t q[10]; unsigned long f; int i; for (i = 0; i < 10; i++) q[i] = r[i]; f = swi_f (0x600eb, q); V = f & 1; C = (f >> 1) & 1; Z = (f >> 2) & 1; N = (f >> 3) & 1; for (i = 0; i < 10; i++) r[i] = q[i]; }
   if (!V) { r[0] = (uint64_t)(int64_t)(0); }
    r[4] = stk[sp + 0]; r[5] = stk[sp + 1]; r[6] = stk[sp + 2]; sp += 4; return (os_error *) (uintptr_t) r[0];
