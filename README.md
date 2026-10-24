@@ -21,7 +21,7 @@ has not been run yet: see
 verification, is documented in [MODIFICATIONS64.md](MODIFICATIONS64.md).** The
 exact edits are in [patches/desklib64-vs-desklib32.diff](patches/desklib64-vs-desklib32.diff).
 
-In summary, `src/` is DeskLib32: 563 files are byte-identical to it, 75 are
+In summary, `src/` is DeskLib32: 567 files are byte-identical to it, 71 are
 modified and 1 is added; the 259 ARM assembler files are kept unchanged but are
 not built (their SWI veneers are translated to C instead):
 
