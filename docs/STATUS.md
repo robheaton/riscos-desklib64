@@ -33,6 +33,8 @@ All of DeskLib's C (about 270 files) and 259 veneers: 506 objects in `libDeskLib
 
 * **`misc`** (command line, 61 checks): `Coord` (point and rectangle tests, unions, window origin and conversions both ways), `LinkList` (all functions and macros), `TextFile` (`ReadToDelimiter`, `SkipBlanks`), `Screen` (`CacheModeInfo`, `ReadModeVariable`, the size, eigen factor and depth variables), `OS_Byte` and `OS_Word` (reads), `Module_Claim` and `Module_Free`, `Pointer` (get, set, restrict to a rectangle, unrestrict), `Kbd` (modifiers and `KeyDown` with nothing held), `Hourglass` (runs without a fault; the display is not checked). `Filter` and `Kbd_GET` (which waits for a key) are not run.
 
+* **`menu2`** (a window that logs to a file): `Menu2_Create`, `Menu2_AttachMenu` (opened with the Menu button), ticked, shaded and dotted items, a static submenu and a dynamic one made by a function (a title and an item longer than twelve characters, so indirected), the flags function (called again by an Adjust click), the select functions with Select and Adjust, and the sub-menu function. The `Error` library: `Error_Report` with a formatted message, `Error_Check`, `Error_CheckSilent`; the error box is shown and each call returns after OK.
+
 ## Not run yet
 `Print` and `PDriver`, `Url`, `Tinct`, `Serial`. They compile, the veneers were translated or written from the assembler, and the structures have the OS layout, but nobody has run them. If something fails, please open an issue with the function and what happened.
 

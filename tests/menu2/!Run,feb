@@ -1,0 +1,3 @@
+| DeskLib64 menu2 test
+Set DLMenu2$Dir <Obey$Dir>
+Run <Obey$Dir>.!RunImage

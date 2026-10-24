@@ -12,6 +12,7 @@
 * Fixed: `strnicmp` and `strdup` clashed with the C library at link time (MODIFICATIONS64.md C10).
 * Fixed (also in DeskLib32): `Environment_SysVarRead` used a register that the SDK does not return on an error (C11), `Environment_SysVarSet` passed a number where the OS wants its address, which faulted in the kernel (C12), and the Task Manager functions read a 16 byte block through a 24 byte structure (C13).
 * Fixed: `Pointer_GetPosition` read its position bytes as signed characters (MODIFICATIONS64.md C14).
+* New test `tests/menu2` (`Menu2`, `Error`), a desktop application that logs each step to a file.
 * New test `tests/misc` (`Coord`, `LinkList`, `TextFile`, `Screen`, `OS_Byte`, `OS_Word`, `Module`, `Pointer`, `Kbd`, `Hourglass`; 61 checks).
 * New test `tests/env` (`Str`, `Time`, `Environment`), a command-line program (51 checks).
 * New test applications `tests/dialogs` (`Dialog2`), `tests/save` (`Save`, file icon drag) and `tests/sprite` (`Sprite`) `tests/pane` (`Pane`, `Pane2`) and `tests/msgs` (`MsgTrans`, `Msgs`) `tests/filing` (`File`, `Filing`) `tests/colour` (`ColourTrans`) and `tests/font` (`Font`, `Font2`, font menu) `tests/clear` (`Clear`, `Mem`), `tests/drag` (`DragASpr`) `tests/clip` (`Clipboard`) and `tests/font3` (`Font_Paint3`, `Font_ScanString`). `tests/sprite` now fills its canvas (it drew outlines).
