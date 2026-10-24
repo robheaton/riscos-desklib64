@@ -1,5 +1,9 @@
 # DeskLib64 - Changelog
 
+## Unreleased
+
+* New `tools/coverage.py` and `docs/COVERAGE.md`: which library functions the test programs reach.
+
 ## 0.2 (24 October 2026)
 
 Testing of most of the library: seventeen new test programs and applications (`tests/dialogs` to `tests/taskwindow`) and 13 fixes (MODIFICATIONS64.md C5 to C15, the translator fix and the font menu fix). `src/` is now 71 modified files and 1 added.

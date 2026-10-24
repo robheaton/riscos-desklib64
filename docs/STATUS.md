@@ -39,6 +39,8 @@ All of DeskLib's C (about 270 files) and 259 veneers: 506 objects in `libDeskLib
 
 * **`taskwindow`** (a window that logs to a file, and a helper program): `TaskWindow_Start` (a command with output, an output function that receives the text, a "died" function), a program reading its input from the task window (`TaskWindow_SendInput`, the program's own `TaskWindow_Check` is non-zero, the caller's is 0), `TaskWindow_Suspend` (the program's output is held), `TaskWindow_Resume` and `TaskWindow_Kill` (the "died" function is called). The task handle that `TaskWindow_Start` returns was 0 in the test; the handle of the new task comes in the `message_TASKWINDOW_EGO` message (the test claims it as well as the library).
 
+See `docs/COVERAGE.md` (made by `tools/coverage.py`) for the list of library functions that no test program calls.
+
 ## Not run yet
 `Print` and `PDriver`, `Url`, `Tinct`, `Serial`, `Filter` (its handler is called with registers, so it needs an assembler-style entry point that has not been written) and `Kbd_GET`. They compile, the veneers were translated or written from the assembler, and the structures have the OS layout, but nobody has run them. If something fails, please open an issue with the function and what happened.
 
