@@ -1,5 +1,9 @@
 # DeskLib64 - Changelog
 
+## Unreleased
+
+* New `ports/build-examples.sh`: builds the example applications of upstream DeskLib for RISC OS 64 (one small patch for `!FontDemo`); see `ports/README.md`.
+
 ## 0.3 (24 October 2026)
 
 Four more test programs (`sprite2test`, `gaps`, `gaps2`, `gaps3`), two more fixes (MODIFICATIONS64.md C16 and C17) and a coverage report: the tests now reach 479 of the 619 library functions (`docs/COVERAGE.md`, made by `tools/coverage.py`). `src/` is still 71 modified files and 1 added; `gen/` is 239 files because `Sprite_AppendP` is now written by hand.

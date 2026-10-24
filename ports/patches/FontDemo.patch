@@ -1,0 +1,12 @@
+--- main.c	2026-10-24 19:47:17.488398454 +0100
++++ main.c	2026-10-24 19:47:17.500296487 +0100
+@@ -215,6 +215,9 @@
+   Wimp_SetColour(colour_WHITE);
+   GFX_RectangleFill(block->rect.min.x, block->rect.min.y, block->rect.max.x, block->rect.max.y);
+ 
++  // The window is redrawn before a font has been chosen: font2 is still NULL.  (RISC OS 32 reads address 0 without a fault, so this was never noticed; RISC OS 64 faults.)
++  if (font2 == NULL) return;
++
+   // Set Font Colour using colourtrans
+   ColourTrans_SetFontColours(font2->handle, std_colour[0], std_colour[fontcol], 14);
+ 

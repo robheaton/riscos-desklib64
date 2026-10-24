@@ -49,6 +49,9 @@ See `docs/COVERAGE.md` (made by `tools/coverage.py`) for the list of library fun
 
 * **`gaps3`** (a desktop task that logs 27 checks and quits): `Window_AutoHelp` and `Window_HelpHandler` (a help request is sent to the task itself and the answer, from a messages file, is checked for two icons; the task must also claim `message_HELPREQUEST` through `EventMsg`), `Menu_PopUp`, `Menu_PopUpAuto`, `Menu_Warn`, `Icon_BarIconUser`, `Icon_ButtonIsHeld`, `Icon_FindValidationStringCommand`, `Wimp_Enumerate`, `Wimp_ReadPixTrans`, `Font_FindCaret`, `Font_FindCaretJ`, `Font_Caret`. Not run: `Window_MoveWindow`, `Icon_StartDrag`, `Wimp_ReportErrorR`, `Wimp_CommandWindow`, `Wimp_SetMode`, `Wimp_SetPalette`, `Wimp_TransferBlock`, `Handler_Key`.
 
+## Upstream DeskLib examples (`ports/`)
+All eleven example applications of upstream DeskLib build with `ports/build-examples.sh`. Run: `!TestApp` (three windows from one template, a menu with a submenu, a changed title), `!Timer` (the counter counts), `!IncDec` (steps and limits), `!Slider` (the bar follows a drag), `!SpriteTst` (a sprite is shown), `!FontDemo` (the font menu, the width and colour menus, the chosen font is painted; with `ports/patches/FontDemo.patch`), `!Redraw` (the window is redrawn in a colour) and `!Tiles` (the tile grid). `!Dialog2EG` and `!Pane2test` start and put an icon on the icon bar (`!Dialog2EG`'s sprite is not in its folder, so the library reports "Sprite doesn't exist" and carries on without the icon); what they show when the icon is used was not checked. `!Tiles2` was not run.
+
 ## Not run yet
 `Print` and `PDriver`, `Url`, `Tinct`, `Serial`, `Filter` (its handler is called with registers, so it needs an assembler-style entry point that has not been written) and `Kbd_GET`. They compile, the veneers were translated or written from the assembler, and the structures have the OS layout, but nobody has run them. If something fails, please open an issue with the function and what happened.
 
