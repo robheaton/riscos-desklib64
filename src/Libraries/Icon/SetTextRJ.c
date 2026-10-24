@@ -27,7 +27,7 @@ extern void Icon_SetTextRJ(window_handle w, icon_handle i, const char *text)
     text = (char *)&empty;
 
   Wimp_GetIconState(w, i, &istate);
-  if (istate.flags.value & (icon_TEXT | icon_INDIRECTED))
+  if ((istate.flags.value & (icon_TEXT | icon_INDIRECTED)) == (icon_TEXT | icon_INDIRECTED))
   {
     /* Indirected text icon, so set text field - ensure no buffer overflow
      */

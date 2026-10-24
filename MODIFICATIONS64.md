@@ -1,12 +1,12 @@
 # DeskLib64 - every change from DeskLib32, and why
 
-This document lists **every** difference between the source in `src/` and DeskLib32 (Andrew Youll's build of upstream DeskLib: https://github.com/adyoull/desklib32, commit `957863a`), and says what is built from the assembler instead. For each change it gives the problem, the evidence, what was changed, what it means for programs that use the library, and how it was checked. The exact source changes are also in `patches/desklib64-vs-desklib32.diff` (71 modified files and 1 added).
+This document lists **every** difference between the source in `src/` and DeskLib32 (Andrew Youll's build of upstream DeskLib: https://github.com/adyoull/desklib32, commit `957863a`), and says what is built from the assembler instead. For each change it gives the problem, the evidence, what was changed, what it means for programs that use the library, and how it was checked. The exact source changes are also in `patches/desklib64-vs-desklib32.diff` (75 modified files and 1 added).
 
 ---
 
 ## 1. What the source is based on
 
-`src/` is DeskLib32 at `957863a` (638 files): 567 are byte-identical to it, 71 are modified (9 headers, 62 library C files) and 1 is added (`include/dl64.h`). The 259 ARM assembler files (`Libraries/*/*.s`) and their include files are **unchanged and not built**: `gen/` and `hand/` have the same SWI veneers in C (section 3).
+`src/` is DeskLib32 at `957863a` (638 files): 563 are byte-identical to it, 75 are modified (9 headers, 66 library C files) and 1 is added (`include/dl64.h`). The 259 ARM assembler files (`Libraries/*/*.s`) and their include files are **unchanged and not built**: `gen/` and `hand/` have the same SWI veneers in C (section 3).
 
 The target is AArch64 RISC OS 64, with the AArch64 RISC OS GCC 16 tool chain (0.14 or newer) and `-munixlib -O2 -fsigned-char`. On this target `int` and `long` are 32 and 64 bits and a pointer is 64 bits; the Window Manager's data structures are made of 32-bit words.
 
@@ -196,6 +196,16 @@ The validation string is compared with `0` and `0xffffffffu` as words (it is a `
 **Change.** The function is written by hand (`hand/Misc.c`): it looks the second sprite up with `OS_SpriteOp 24` and passes both addresses. The prototype is unchanged. (The generated `gen/Sprite/35AppendP.c` is removed.)
 
 **Verification.** `tests/sprite/sprite2test.c`: `Sprite_AppendP` joins horizontally and vertically, the second sprite is deleted and the size is the sum.
+
+### C17. `Icon/SetText.c`, `SetTextRJ.c`, `GetInteger.c`, `GetDouble.c` - the test for an indirected text icon
+
+**Problem.** These four functions work with the text buffer of an indirected text icon, and check `flags & (icon_TEXT | icon_INDIRECTED)`, which is true for an icon with either flag. For a text icon that is not indirected, the first bytes of the text are then taken as the address of the buffer: `Icon_SetTextRJ (window, icon, "x")` on a button called "Static" copies to the address made from the characters "Stat" and the program aborts (also in DeskLib32, where the address is as wrong).
+
+**Evidence.** `tests/gaps`: the call on an icon with direct text aborted with a data abort in `strcpy`.
+
+**Change.** The test is `(flags & (icon_TEXT | icon_INDIRECTED)) == (icon_TEXT | icon_INDIRECTED)`; for other icons the functions do nothing (their documented behaviour for an incorrect icon type is to return quietly).
+
+**Verification.** `tests/gaps`: the calls on a direct text icon do nothing; on an indirected icon `Icon_SetTextRJ`, `Icon_SetDouble` and `Icon_GetDouble` work.
 
 ---
 

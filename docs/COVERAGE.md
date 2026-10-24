@@ -2,7 +2,7 @@
 
 Made by `tools/coverage.py`. A function is **called** if a test program calls it, and **reached** if a test calls it or a function that it calls does (so `Wimp_Poll`, which `Event_Poll` calls, counts). Reached means the test code can run it, not that its result was checked: `docs/STATUS.md` says what each test checks.
 
-**366 of 619 library functions are reached (299 are called directly).**
+**429 of 619 library functions are reached (364 are called directly).**
 
 | Module | Called | Reached | Total | Not reached |
 |---|---:|---:|---:|---|
@@ -25,16 +25,16 @@ Made by `tools/coverage.py`. A function is **called** if a test program calls it
 | Filter | 0 | 0 | 4 | DeRegisterPostFilter, DeRegisterPreFilter, RegisterPostFilter, RegisterPreFilter |
 | (no prefix) | 8 | 12 | 14 | FindPaneWindow, OpenWindow |
 | Font2 | 4 | 4 | 4 |  |
-| Font | 17 | 17 | 28 | Caret, CharBBox, FindCaret, FindCaretJ, FutureFont, LoseAllFonts, ReadThresholds, SetFontColours, SetPalette, SetScaleFactor, SetThresholds |
+| Font | 17 | 18 | 28 | Caret, CharBBox, FindCaret, FindCaretJ, FutureFont, ReadThresholds, SetFontColours, SetPalette, SetScaleFactor, SetThresholds |
 | GFX | 1 | 1 | 11 | CLG, GetClip, ReadPoint, Rectangle, SetClip, SetColour, VDU, Wait, Write0, WriteN |
 | Handler | 1 | 3 | 10 | ClickOK, CloseWindow, DeleteWindow, HatchRedraw, Key, ModeChange, NullRedraw |
 | Hourglass | 5 | 5 | 5 |  |
-| Icon | 19 | 27 | 47 | AlterValidation, BarIcon, BarIconUser, ButtonIsHeld, ClickWait, FindValidationStringCommand, ForceWindowRedraw, GetBgCol, GetDouble, GetFgCol, ReleaseIncDecHandler, ScanValidationString, SetBackColour, SetDeleted, SetDouble, SetForeColour, SetSelect, SetShade, SetTextRJ, StartDrag |
+| Icon | 34 | 42 | 47 | BarIconUser, ButtonIsHeld, ClickWait, FindValidationStringCommand, StartDrag |
 | Kbd | 2 | 2 | 3 | GET |
 | LinkList | 7 | 7 | 7 |  |
 | Mem | 4 | 4 | 8 | CheckHeap, Compact, MoveAnchor, Size |
 | Menu2 | 2 | 3 | 5 | CreateFromMsgs, DetachMenu |
-| Menu | 5 | 6 | 25 | AddSubMenu, AddSubWindow, CalcHeight, Extend, FullDispose, GetFlags, GetText, MakeIndirected, MakeWritable, NewColourMenu, NewEmpty, PopUp, PopUpAuto, RemoveItem, ReviseWidth, SetText, Warn, _CountItems, _Create |
+| Menu | 19 | 22 | 25 | PopUp, PopUpAuto, Warn |
 | MessageTrans | 4 | 4 | 4 |  |
 | Module | 2 | 2 | 2 |  |
 | MsgTrans | 3 | 3 | 4 | ReportPS |
@@ -54,12 +54,12 @@ Made by `tools/coverage.py`. A function is **called** if a test program calls it
 | Sprite | 63 | 64 | 76 | IconMemorySize, PlotGreyP, PlotMaskP, PlotMaskScaled, PlotMaskScaledP, PlotP, PlotScaledP, RedirectMask, RedirectMaskP, RedirectP, ScreenLoad, WimpPlot |
 | Str | 5 | 5 | 5 |  |
 | TaskWindow | 6 | 6 | 6 |  |
-| Template | 2 | 5 | 11 | ClearAll, Delete, Find, LinkSpriteArea, UseOutlineFonts, UseSpriteArea |
+| Template | 7 | 10 | 11 | LinkSpriteArea |
 | TextFile | 1 | 2 | 2 |  |
 | Time | 6 | 6 | 6 |  |
 | Tinct | 0 | 0 | 8 | AvailableFeatures, Compress, ConvertSprite, Decompress, Plot, PlotAlpha, PlotScaled, PlotScaledAlpha |
 | Url | 0 | 0 | 4 | AddHandler, Encode, Launch, RemoveHandler |
 | WimpMsg | 0 | 0 | 4 | Ack, GetTaskHandle, Reply, Send |
-| Wimp | 9 | 33 | 59 | BaseOfSprites, BlockCopy, CommandWindow, DecodeMenu, Enumerate, GetWindowInfo, GetWindowInfoNoIcons, GetWindowOutline, OpenWindowNest, Poll, PollIdle, ReadPalette, ReadPixTrans, RedrawTitle, RemoveMessages, ReportErrorR, SetExtent, SetFontColours, SetMode, SetPalette, SetPointerShape, SlotSize, SpriteOp, StartTask, StartTask3, TransferBlock |
-| Window | 3 | 5 | 20 | AutoHelp, CreateAndShow, CreateOrig, DeleteOrig, ForceWholeRedraw, GainCaret, GetCoords, GetInfo, HelpHandler, IsOpen, ModeChange, MoveWindow, ParentName, SetExtent, SetTitle |
+| Wimp | 28 | 48 | 59 | CommandWindow, Enumerate, Poll, PollIdle, ReadPixTrans, ReportErrorR, SetMode, SetPalette, SetPointerShape, SpriteOp, TransferBlock |
+| Window | 15 | 16 | 20 | AutoHelp, HelpHandler, ModeChange, MoveWindow |
 |  | 0 | 0 | 1 | _wassert |

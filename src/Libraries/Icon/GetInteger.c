@@ -15,7 +15,7 @@ extern int Icon_GetInteger(window_handle w, icon_handle i)
   icon_block istate;
 
   Wimp_GetIconState(w, i, &istate);
-  if (istate.flags.value & (icon_TEXT | icon_INDIRECTED))
+  if ((istate.flags.value & (icon_TEXT | icon_INDIRECTED)) == (icon_TEXT | icon_INDIRECTED))
     return(atoi(((char *) DL_P (istate.data.indirecttext.buffer))));
 
   return(0);

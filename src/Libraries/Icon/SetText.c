@@ -39,7 +39,7 @@ extern void Icon_SetText(window_handle w, icon_handle i, const char *text)
     text = temp;
 
   Wimp_GetIconState(w, i, &istate);
-  if (istate.flags.value & (icon_TEXT | icon_INDIRECTED))
+  if ((istate.flags.value & (icon_TEXT | icon_INDIRECTED)) == (icon_TEXT | icon_INDIRECTED))
   {
     /* Indirected text icon, so set text field - ensure no buffer overflow */
     strncpy(((char *) DL_P (istate.data.indirecttext.buffer)), text,

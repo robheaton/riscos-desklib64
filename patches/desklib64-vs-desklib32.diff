@@ -732,12 +732,14 @@ diff -ruN --text a/Libraries/Icon/GetBgCol.c b/Libraries/Icon/GetBgCol.c
    if (colour == -1)
 diff -ruN --text a/Libraries/Icon/GetDouble.c b/Libraries/Icon/GetDouble.c
 --- a/Libraries/Icon/GetDouble.c	2026-10-24 11:39:09.287440266 +0100
-+++ b/Libraries/Icon/GetDouble.c	2026-10-24 13:00:56.005129249 +0100
-@@ -16,7 +16,7 @@
++++ b/Libraries/Icon/GetDouble.c	2026-10-24 19:14:53.968036701 +0100
+@@ -15,8 +15,8 @@
+   icon_block istate;
  
    Wimp_GetIconState(w, i, &istate);
-   if (istate.flags.value & (icon_TEXT | icon_INDIRECTED))
+-  if (istate.flags.value & (icon_TEXT | icon_INDIRECTED))
 -    return(atof(istate.data.indirecttext.buffer));
++  if ((istate.flags.value & (icon_TEXT | icon_INDIRECTED)) == (icon_TEXT | icon_INDIRECTED))
 +    return(atof(((char *) DL_P (istate.data.indirecttext.buffer))));
  
    return(0);
@@ -765,12 +767,14 @@ diff -ruN --text a/Libraries/Icon/GetFgCol.c b/Libraries/Icon/GetFgCol.c
    if (colour == -1)
 diff -ruN --text a/Libraries/Icon/GetInteger.c b/Libraries/Icon/GetInteger.c
 --- a/Libraries/Icon/GetInteger.c	2026-10-24 11:39:09.287440266 +0100
-+++ b/Libraries/Icon/GetInteger.c	2026-10-24 13:00:56.005164891 +0100
-@@ -16,7 +16,7 @@
++++ b/Libraries/Icon/GetInteger.c	2026-10-24 19:14:53.969611566 +0100
+@@ -15,8 +15,8 @@
+   icon_block istate;
  
    Wimp_GetIconState(w, i, &istate);
-   if (istate.flags.value & (icon_TEXT | icon_INDIRECTED))
+-  if (istate.flags.value & (icon_TEXT | icon_INDIRECTED))
 -    return(atoi(istate.data.indirecttext.buffer));
++  if ((istate.flags.value & (icon_TEXT | icon_INDIRECTED)) == (icon_TEXT | icon_INDIRECTED))
 +    return(atoi(((char *) DL_P (istate.data.indirecttext.buffer))));
  
    return(0);
@@ -841,9 +845,13 @@ diff -ruN --text a/Libraries/Icon/SetCaret.c b/Libraries/Icon/SetCaret.c
      {
 diff -ruN --text a/Libraries/Icon/SetText.c b/Libraries/Icon/SetText.c
 --- a/Libraries/Icon/SetText.c	2026-10-24 11:39:09.287440266 +0100
-+++ b/Libraries/Icon/SetText.c	2026-10-24 13:00:56.005551311 +0100
-@@ -42,15 +42,15 @@
-   if (istate.flags.value & (icon_TEXT | icon_INDIRECTED))
++++ b/Libraries/Icon/SetText.c	2026-10-24 19:14:53.965526673 +0100
+@@ -39,18 +39,18 @@
+     text = temp;
+ 
+   Wimp_GetIconState(w, i, &istate);
+-  if (istate.flags.value & (icon_TEXT | icon_INDIRECTED))
++  if ((istate.flags.value & (icon_TEXT | icon_INDIRECTED)) == (icon_TEXT | icon_INDIRECTED))
    {
      /* Indirected text icon, so set text field - ensure no buffer overflow */
 -    strncpy(istate.data.indirecttext.buffer, text,
@@ -863,8 +871,15 @@ diff -ruN --text a/Libraries/Icon/SetText.c b/Libraries/Icon/SetText.c
          caret.index = len;
 diff -ruN --text a/Libraries/Icon/SetTextRJ.c b/Libraries/Icon/SetTextRJ.c
 --- a/Libraries/Icon/SetTextRJ.c	2026-10-24 11:39:09.287440266 +0100
-+++ b/Libraries/Icon/SetTextRJ.c	2026-10-24 13:00:56.005570660 +0100
-@@ -33,7 +33,7 @@
++++ b/Libraries/Icon/SetTextRJ.c	2026-10-24 19:14:53.966810106 +0100
+@@ -27,13 +27,13 @@
+     text = (char *)&empty;
+ 
+   Wimp_GetIconState(w, i, &istate);
+-  if (istate.flags.value & (icon_TEXT | icon_INDIRECTED))
++  if ((istate.flags.value & (icon_TEXT | icon_INDIRECTED)) == (icon_TEXT | icon_INDIRECTED))
+   {
+     /* Indirected text icon, so set text field - ensure no buffer overflow
       */
      register int  textlength = strlen(text) + 1 ;
      register int  bufflength = istate.data.indirecttext.bufflen ;

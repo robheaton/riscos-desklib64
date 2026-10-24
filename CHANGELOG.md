@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+* Fixed (also in DeskLib32): `Icon_SetText`, `Icon_SetTextRJ`, `Icon_GetInteger` and `Icon_GetDouble` treated an icon with direct text as an indirected one and used its text as an address (MODIFICATIONS64.md C17).
+* New test `tests/gaps` (a desktop task, 78 checks): Wimp window information calls, the Window functions, Template, the Icon colour, shade, selection and number functions, validation strings, `Icon_BarIcon`, and the Menu builders.
 * Fixed (also in DeskLib32): `Sprite_AppendP` passed the second sprite by name to the pointer form of `OS_SpriteOp 35`, which refuses it ("Can't append sprite"); the second sprite is now looked up first (MODIFICATIONS64.md C16).
 * New test `tests/sprite/sprite2test.c` (command line, 80 checks): the pointer forms of the Sprite functions, rows and columns, `Append`, palettes, `MemorySize`, `Get` from the screen, `ScreenSave`, `Merge`, `LoadFiles`.
 * New `tools/coverage.py` and `docs/COVERAGE.md`: which library functions the test programs reach.
