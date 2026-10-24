@@ -2,7 +2,7 @@
 
 Made by `tools/coverage.py`. A function is **called** if a test program calls it, and **reached** if a test calls it or a function that it calls does (so `Wimp_Poll`, which `Event_Poll` calls, counts). Reached means the test code can run it, not that its result was checked: `docs/STATUS.md` says what each test checks.
 
-**429 of 619 library functions are reached (364 are called directly).**
+**465 of 619 library functions are reached (399 are called directly).**
 
 | Module | Called | Reached | Total | Not reached |
 |---|---:|---:|---:|---|
@@ -23,13 +23,13 @@ Made by `tools/coverage.py`. A function is **called** if a test program calls it
 | File | 24 | 24 | 24 |  |
 | Filing | 14 | 17 | 18 | ScanDirByDir |
 | Filter | 0 | 0 | 4 | DeRegisterPostFilter, DeRegisterPreFilter, RegisterPostFilter, RegisterPreFilter |
-| (no prefix) | 8 | 12 | 14 | FindPaneWindow, OpenWindow |
+| (no prefix) | 8 | 14 | 14 |  |
 | Font2 | 4 | 4 | 4 |  |
-| Font | 17 | 18 | 28 | Caret, CharBBox, FindCaret, FindCaretJ, FutureFont, ReadThresholds, SetFontColours, SetPalette, SetScaleFactor, SetThresholds |
+| Font | 24 | 24 | 28 | Caret, FindCaret, FindCaretJ, SetScaleFactor |
 | GFX | 1 | 1 | 11 | CLG, GetClip, ReadPoint, Rectangle, SetClip, SetColour, VDU, Wait, Write0, WriteN |
-| Handler | 1 | 3 | 10 | ClickOK, CloseWindow, DeleteWindow, HatchRedraw, Key, ModeChange, NullRedraw |
+| Handler | 7 | 9 | 10 | Key |
 | Hourglass | 5 | 5 | 5 |  |
-| Icon | 34 | 42 | 47 | BarIconUser, ButtonIsHeld, ClickWait, FindValidationStringCommand, StartDrag |
+| Icon | 34 | 43 | 47 | BarIconUser, ButtonIsHeld, FindValidationStringCommand, StartDrag |
 | Kbd | 2 | 2 | 3 | GET |
 | LinkList | 7 | 7 | 7 |  |
 | Mem | 4 | 4 | 8 | CheckHeap, Compact, MoveAnchor, Size |
@@ -41,11 +41,11 @@ Made by `tools/coverage.py`. A function is **called** if a test program calls it
 | Msgs | 4 | 5 | 8 | Report, ReportFatal, _Find |
 | OS | 2 | 2 | 2 |  |
 | PDriver | 0 | 0 | 17 | AbortJob, CancelJob, CancelJobWithError, CheckFeatures, CurrentJob, DrawPage, EndJob, EnumerateJobs, GetRectangle, GiveRectangle, Info, InsertIllustration, PageSize, PrinterName, ScreenDump, SelectIllustration, SelectJob |
-| Pane2 | 3 | 5 | 16 | Delete, DeletePane, GetMainHandle, GetPaneHandle, GetPaneNumber, Hide, OpenWindow, ReadIcon, ReadVars, SetFlags, SetVars |
-| Pane | 4 | 4 | 8 | Delete, Hide, Link, SetFlags |
+| Pane2 | 16 | 16 | 16 |  |
+| Pane | 8 | 8 | 8 |  |
 | Pointer | 4 | 4 | 6 | RestrictToIcon, RestrictToWindow |
 | Print | 0 | 0 | 1 | StartPrint |
-| Resource | 1 | 1 | 6 | ChoicesInit, ChoicesPath, InitialiseAuto, InitialisePath, LoadSprites |
+| Resource | 6 | 6 | 6 |  |
 | SWI | 0 | 0 | 2 | SWINumberFromString, SWINumberToString |
 | Save | 1 | 1 | 3 | ReleaseSaveHandlers, SetFiletype |
 | Screen | 2 | 2 | 2 |  |
@@ -61,5 +61,5 @@ Made by `tools/coverage.py`. A function is **called** if a test program calls it
 | Url | 0 | 0 | 4 | AddHandler, Encode, Launch, RemoveHandler |
 | WimpMsg | 0 | 0 | 4 | Ack, GetTaskHandle, Reply, Send |
 | Wimp | 28 | 48 | 59 | CommandWindow, Enumerate, Poll, PollIdle, ReadPixTrans, ReportErrorR, SetMode, SetPalette, SetPointerShape, SpriteOp, TransferBlock |
-| Window | 15 | 16 | 20 | AutoHelp, HelpHandler, ModeChange, MoveWindow |
+| Window | 15 | 17 | 20 | AutoHelp, HelpHandler, MoveWindow |
 |  | 0 | 0 | 1 | _wassert |
