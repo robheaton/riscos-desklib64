@@ -37,8 +37,10 @@ All of DeskLib's C (about 270 files) and 259 veneers: 506 objects in `libDeskLib
 
 * **`controls`** (two windows, a log file): radio icons (`Icon_SetRadios`, `Icon_WhichRadio`, `Icon_WhichRadioInEsg`), an option icon, `Icon_ShadeGroup`, `Icon_SelectGroup`, the IncDec handler (steps, limits), the old icon slider (`Icon_SetSlider` with clipping, `Icon_ReadSlider`, `Icon_DragSlider` and `Icon_UpdateSlider` while dragging), and the `Slider` library in a window that is redrawn by the program (`Slider_SetValue` with limits, `Slider_ReadValue`, the update function, `Slider_Drag` with the mouse). `Slider_Redraw` returns no error, but the drawing of the bar (it uses `OS_Plot`) was not confirmed on screen.
 
+* **`taskwindow`** (a window that logs to a file, and a helper program): `TaskWindow_Start` (a command with output, an output function that receives the text, a "died" function), a program reading its input from the task window (`TaskWindow_SendInput`, the program's own `TaskWindow_Check` is non-zero, the caller's is 0), `TaskWindow_Suspend` (the program's output is held), `TaskWindow_Resume` and `TaskWindow_Kill` (the "died" function is called). The task handle that `TaskWindow_Start` returns was 0 in the test; the handle of the new task comes in the `message_TASKWINDOW_EGO` message (the test claims it as well as the library).
+
 ## Not run yet
-`Print` and `PDriver`, `Url`, `Tinct`, `Serial`, `Filter` (its handler is called with registers, so it needs an assembler-style entry point that has not been written), `TaskWindow` and `Kbd_GET`. They compile, the veneers were translated or written from the assembler, and the structures have the OS layout, but nobody has run them. If something fails, please open an issue with the function and what happened.
+`Print` and `PDriver`, `Url`, `Tinct`, `Serial`, `Filter` (its handler is called with registers, so it needs an assembler-style entry point that has not been written) and `Kbd_GET`. They compile, the veneers were translated or written from the assembler, and the structures have the OS layout, but nobody has run them. If something fails, please open an issue with the function and what happened.
 
 ## Known limits
 * Arguments after the fourth to the translated veneers and structures passed by value are assumed to fit a 32-bit word (see docs/PORTING.md).

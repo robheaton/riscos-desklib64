@@ -1407,6 +1407,18 @@ diff -ruN --text a/Libraries/Str/strnicmp.c b/Libraries/Str/strnicmp.c
    }
  }
 +#endif
+diff -ruN --text a/Libraries/TaskWindow/SendInput.c b/Libraries/TaskWindow/SendInput.c
+--- a/Libraries/TaskWindow/SendInput.c	2026-10-24 11:39:09.291796916 +0100
++++ b/Libraries/TaskWindow/SendInput.c	2026-10-24 18:35:46.610629623 +0100
+@@ -27,7 +27,7 @@
+     if ((datalen - sent) < 232)
+     {
+       mess.header.size = WORDALIGN(24 + (datalen - sent));
+-      mess.data.words[0] = 24 + (datalen - sent);
++      mess.data.words[0] = datalen - sent;   /* the count of bytes of data (the original added 24) */
+       memcpy(mess.data.bytes + 4, data + sent, (datalen - sent));
+       sent = datalen;
+     }
 diff -ruN --text a/Libraries/Template/ClearAll.c b/Libraries/Template/ClearAll.c
 --- a/Libraries/Template/ClearAll.c	2026-10-24 11:39:09.291796916 +0100
 +++ b/Libraries/Template/ClearAll.c	2026-10-24 13:00:56.010076464 +0100

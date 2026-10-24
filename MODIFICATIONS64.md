@@ -1,12 +1,12 @@
 # DeskLib64 - every change from DeskLib32, and why
 
-This document lists **every** difference between the source in `src/` and DeskLib32 (Andrew Youll's build of upstream DeskLib: https://github.com/adyoull/desklib32, commit `957863a`), and says what is built from the assembler instead. For each change it gives the problem, the evidence, what was changed, what it means for programs that use the library, and how it was checked. The exact source changes are also in `patches/desklib64-vs-desklib32.diff` (70 modified files and 1 added).
+This document lists **every** difference between the source in `src/` and DeskLib32 (Andrew Youll's build of upstream DeskLib: https://github.com/adyoull/desklib32, commit `957863a`), and says what is built from the assembler instead. For each change it gives the problem, the evidence, what was changed, what it means for programs that use the library, and how it was checked. The exact source changes are also in `patches/desklib64-vs-desklib32.diff` (71 modified files and 1 added).
 
 ---
 
 ## 1. What the source is based on
 
-`src/` is DeskLib32 at `957863a` (638 files): 568 are byte-identical to it, 70 are modified (9 headers, 61 library C files) and 1 is added (`include/dl64.h`). The 259 ARM assembler files (`Libraries/*/*.s`) and their include files are **unchanged and not built**: `gen/` and `hand/` have the same SWI veneers in C (section 3).
+`src/` is DeskLib32 at `957863a` (638 files): 567 are byte-identical to it, 71 are modified (9 headers, 62 library C files) and 1 is added (`include/dl64.h`). The 259 ARM assembler files (`Libraries/*/*.s`) and their include files are **unchanged and not built**: `gen/` and `hand/` have the same SWI veneers in C (section 3).
 
 The target is AArch64 RISC OS 64, with the AArch64 RISC OS GCC 16 tool chain (0.14 or newer) and `-munixlib -O2 -fsigned-char`. On this target `int` and `long` are 32 and 64 bits and a pointer is 64 bits; the Window Manager's data structures are made of 32-bit words.
 
@@ -176,6 +176,16 @@ The validation string is compared with `0` and `0xffffffffu` as words (it is a `
 **Change.** The block is `unsigned char`.
 
 **Verification.** `tests/misc`: the position set with `Pointer_SetPosition (400, 300)` reads back as 400, 300.
+
+### C15. `TaskWindow/SendInput.c` - the byte count of the input message
+
+**Problem.** `TaskWindow_SendInput` sets the count at the start of the message data to `24 + length` for the last (or only) message, but the count is the number of bytes of input that follow, and the longer messages use `232` for 232 bytes. The task window task therefore read 24 extra bytes after the input, which were whatever was left in the message block (also in DeskLib32).
+
+**Evidence.** `tests/taskwindow`: a program reading lines from its input was sent `ping one\n` and read the line, then a second line of garbage made from text left on the stack, and an empty line.
+
+**Change.** The count is the length of the data.
+
+**Verification.** `tests/taskwindow`: the program reads exactly `ping one`, and later exactly `second`.
 
 ---
 

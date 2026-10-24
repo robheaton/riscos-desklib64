@@ -27,7 +27,7 @@ void TaskWindow_SendInput(task_handle handle, const char *data, size_t datalen)
     if ((datalen - sent) < 232)
     {
       mess.header.size = WORDALIGN(24 + (datalen - sent));
-      mess.data.words[0] = 24 + (datalen - sent);
+      mess.data.words[0] = datalen - sent;   /* the count of bytes of data (the original added 24) */
       memcpy(mess.data.bytes + 4, data + sent, (datalen - sent));
       sent = datalen;
     }

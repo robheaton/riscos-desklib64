@@ -12,6 +12,8 @@
 * Fixed: `strnicmp` and `strdup` clashed with the C library at link time (MODIFICATIONS64.md C10).
 * Fixed (also in DeskLib32): `Environment_SysVarRead` used a register that the SDK does not return on an error (C11), `Environment_SysVarSet` passed a number where the OS wants its address, which faulted in the kernel (C12), and the Task Manager functions read a 16 byte block through a 24 byte structure (C13).
 * Fixed: `Pointer_GetPosition` read its position bytes as signed characters (MODIFICATIONS64.md C14).
+* Fixed (also in DeskLib32): `TaskWindow_SendInput` told the task window task that 24 more bytes of input followed than were sent (MODIFICATIONS64.md C15).
+* New test `tests/taskwindow` (`TaskWindow_Start` with output and "died" functions, `SendInput`, `Suspend`, `Resume`, `Kill`, `TaskWindow_Check`), with a helper program that runs in the task window.
 * New test `tests/controls` (radios, options, `IncDec`, both slider libraries).
 * New test `tests/menu2` (`Menu2`, `Error`), a desktop application that logs each step to a file.
 * New test `tests/misc` (`Coord`, `LinkList`, `TextFile`, `Screen`, `OS_Byte`, `OS_Word`, `Module`, `Pointer`, `Kbd`, `Hourglass`; 61 checks).
