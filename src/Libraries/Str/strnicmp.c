@@ -18,6 +18,7 @@
 
 #include "DeskLib:Str.h"
 
+#ifdef __TARGET_SCL__   /* only where the C library has no strnicmp (the GCC C libraries do: this definition clashed with theirs) */
 int strnicmp(const char *s1, const char *s2, size_t n)
 {
   char ch1 = 0,
@@ -38,3 +39,4 @@ int strnicmp(const char *s1, const char *s2, size_t n)
     n--;
   }
 }
+#endif

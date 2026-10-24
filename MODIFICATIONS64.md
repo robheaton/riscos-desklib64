@@ -1,12 +1,12 @@
 # DeskLib64 - every change from DeskLib32, and why
 
-This document lists **every** difference between the source in `src/` and DeskLib32 (Andrew Youll's build of upstream DeskLib: https://github.com/adyoull/desklib32, commit `957863a`), and says what is built from the assembler instead. For each change it gives the problem, the evidence, what was changed, what it means for programs that use the library, and how it was checked. The exact source changes are also in `patches/desklib64-vs-desklib32.diff` (65 modified files and 1 added).
+This document lists **every** difference between the source in `src/` and DeskLib32 (Andrew Youll's build of upstream DeskLib: https://github.com/adyoull/desklib32, commit `957863a`), and says what is built from the assembler instead. For each change it gives the problem, the evidence, what was changed, what it means for programs that use the library, and how it was checked. The exact source changes are also in `patches/desklib64-vs-desklib32.diff` (69 modified files and 1 added).
 
 ---
 
 ## 1. What the source is based on
 
-`src/` is DeskLib32 at `957863a` (638 files): 573 are byte-identical to it, 65 are modified (9 headers, 56 library C files) and 1 is added (`include/dl64.h`). The 259 ARM assembler files (`Libraries/*/*.s`) and their include files are **unchanged and not built**: `gen/` and `hand/` have the same SWI veneers in C (section 3).
+`src/` is DeskLib32 at `957863a` (638 files): 569 are byte-identical to it, 69 are modified (9 headers, 60 library C files) and 1 is added (`include/dl64.h`). The 259 ARM assembler files (`Libraries/*/*.s`) and their include files are **unchanged and not built**: `gen/` and `hand/` have the same SWI veneers in C (section 3).
 
 The target is AArch64 RISC OS 64, with the AArch64 RISC OS GCC 16 tool chain (0.14 or newer) and `-munixlib -O2 -fsigned-char`. On this target `int` and `long` are 32 and 64 bits and a pointer is 64 bits; the Window Manager's data structures are made of 32-bit words.
 
@@ -128,6 +128,46 @@ The validation string is compared with `0` and `0xffffffffu` as words (it is a `
 **Change.** The register is taken in an `int` and widened (`(char *) (uintptr_t) (unsigned int)`) before it is stored in `*end`. (`Environment_TaskNameFromHandle` has the same pattern, but initialises its pointer to 0 first, so it is correct.)
 
 **Verification.** `tests/font3`: the end pointer is `string + 9`.
+
+### C10. `Str/strnicmp.c`, `Str/strdup.c` - clash with the C library
+
+**Problem.** DeskLib defines `strnicmp` and `strdup` unconditionally. The AArch64 C library has both, so a program that links `libDeskLib64.a` and uses either gets "multiple definition" from the linker. (`stricmp` is already guarded in the same way.)
+
+**Evidence.** `tests/env` did not link.
+
+**Change.** Both files are wrapped in `#ifdef __TARGET_SCL__`, so the C library's functions are used.
+
+**Verification.** `tests/env` links and its `strnicmp` and `strdup` checks pass.
+
+### C11. `Environment/SysVars.c` - `Environment_SysVarRead` tested a register that is not returned
+
+**Problem.** The function finds out whether a variable exists by calling `OS_ReadVarVal` with a buffer size of -1 and testing the length returned in R2 (the call gives the "buffer overflow" error when the variable exists). The SDK's `_kernel_swi` does not return the output registers when a SWI gives an error (the Shared C Library's did), so R2 was whatever was on the stack. The value was also used as an index into the buffer.
+
+**Evidence.** `tests/env`: the first run aborted in `Environment_SysVarRead` with a wild address. (`Resource_Initialise` calls this function.)
+
+**Change.** Existence is the error number: no error, or `&1E4` (buffer overflow), means the variable exists; the length is only used after the real read, and only when it fits.
+
+**Verification.** `tests/env`: a variable that does not exist reads as FALSE; a string and a number variable read back.
+
+### C12. `Environment/SysVars.c` - `Environment_SysVarSet` with `sysvar_NUMBER`
+
+**Problem.** For a number variable the function passed the number itself in R1, but `OS_SetVarVal` takes the address of the word. The OS read from address 42. In 32-bit RISC OS that is a read of low memory (a wrong value, or an abort); on RISC OS 64 it is a data abort inside the kernel.
+
+**Evidence.** `tests/env`: setting a number variable aborted.
+
+**Change.** R1 is the address of the number (length 4).
+
+**Verification.** `tests/env`: the variable reads back as the word 42.
+
+### C13. `Environment/Tasks.c` - the Task Manager's block, and a free in the wrong index
+
+**Problem.** `Environment_TaskList`, `Environment_TaskIsActive` and `Environment_TaskInfo` read the `TaskManager_EnumerateTasks` block through a structure with a `char *` name. The OS writes a 32-bit pointer (16 bytes in all), so the name, size and flags were read at the wrong offsets and the name pointer was garbage. `Environment_TaskNameFromHandle` took a pointer through `SWI ()` (4 bytes, see C9) into a `char *`. The clean-up when `malloc` fails in `Environment_TaskList` freed `list[i]` (the entry that failed) instead of `list[j]` (also in DeskLib32).
+
+**Evidence.** `tests/env`: `Environment_TaskList` aborted with a data abort on a wild address.
+
+**Change.** The block uses `dl_ptr`, the name is converted with `DL_P`, `TaskNameFromHandle` takes the register in an `unsigned int`, and the loop frees `list[j]`.
+
+**Verification.** `tests/env`: the task list has the Filer in it, `Environment_TaskIsActive` finds it and does not find a task that is not running.
 
 ---
 

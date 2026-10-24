@@ -28,7 +28,7 @@
 typedef struct
 {
   unsigned int handle;
-  char *name;
+  dl_ptr name;                 /* a 32-bit OS pointer: 16 bytes in all, as the Task Manager writes it */
   unsigned int slotsize;
   unsigned int flags;
 } enumeratetasks__block;
@@ -45,7 +45,7 @@ BOOL Environment_TaskIsActive(const char *appname)
   while ((seq >= 0) && !returnvalue) /* SWI returns -ve seq if no more entries */
   {
     Error_CheckFatal(SWI(3, 1, SWI_TaskManager_EnumerateTasks, seq, &data, size, &seq));
-    if (!strcmpcr(appname, data.name)) returnvalue = TRUE; /* skip out of loop if entry found */
+    if (!strcmpcr(appname, (const char *) DL_P (data.name))) returnvalue = TRUE; /* skip out of loop if entry found */
   }
 
   return returnvalue;
@@ -85,19 +85,19 @@ os_error *Environment_TaskList(char ***ptrlist, int *numtasks)
   {
     Error_CheckFatal(SWI(3, 1, SWI_TaskManager_EnumerateTasks, seq, &data, size, &seq));
 
-    list[i] = malloc(strlencr(data.name) + 1); /* Allocate length of string + terminator */
+    list[i] = malloc(strlencr((const char *) DL_P (data.name)) + 1); /* Allocate length of string + terminator */
     if (!list[i])
     {
       error_global.errnum = 1;
       snprintf(error_global.errmess, sizeof(error_global.errmess), "Unable to allocate memory in Environment_TaskList");
       for (j = 0; j < i; j++)
-        free(list[i]);
+        free(list[j]);
 
       free(list);
 
       return &error_global;
     }
-    strcpycr(list[i], data.name); /* Don't need strNcpy as correct length allocated dynamically*/
+    strcpycr(list[i], (const char *) DL_P (data.name)); /* Don't need strNcpy as correct length allocated dynamically*/
   }
 
   *ptrlist = list;
@@ -120,12 +120,12 @@ void Environment_TaskListFree(char **ptrlist, int numtasks)
 
 os_error *Environment_TaskNameFromHandle(task_handle task, char *buf, int bufsize)
 {
-  char *result = 0;
+  unsigned int result = 0;      /* the OS returns a 32-bit pointer */
   os_error *swierr;
 
   swierr = SWI(1, 1, SWI_TaskManager_TaskNameFromHandle, task, &result);
 
-  strncpycr(buf, result, bufsize - 1);
+  strncpycr(buf, (const char *) DL_P (result), bufsize - 1);
   buf[bufsize - 1] = '\0';
 
   return swierr;
@@ -144,7 +144,7 @@ os_error *Environment_TaskInfo(const char *appname, task_info *taskinfo)
   while ((seq >= 0) && !foundtask) /* SWI returns -ve seq if no more entries */
   {
     error = SWI(3, 1, SWI_TaskManager_EnumerateTasks, seq, &data, size, &seq);
-    if (!strcmpcr(appname, data.name)) foundtask = TRUE; /* skip out of loop when entry found */
+    if (!strcmpcr(appname, (const char *) DL_P (data.name))) foundtask = TRUE; /* skip out of loop when entry found */
   }
 
 

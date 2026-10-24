@@ -19,6 +19,7 @@
 
 #include "DeskLib:Str.h"
 
+#ifdef __TARGET_SCL__   /* only where the C library has no *strdup (the GCC C libraries do: this definition clashed with theirs) */
 char *strdup(const char *src)
 {
   int   len;
@@ -41,3 +42,4 @@ char *strdup(const char *src)
 
   return dest;
 }
+#endif

@@ -27,11 +27,15 @@
 BOOL Environment_SysVarRead(const char *varname, char *buf, int bufsize)
 {
   BOOL returnvalue = FALSE;
-  int result;
+  int result = 0;
+  os_error *error;
 
-  /* Check for existence of this system variable */
-  SWI(3, 3, SWI_OS_ReadVarVal, varname, buf, -1, NULL, NULL, &result);
-  if (result < 0)
+  /* Check for existence of this system variable.  With a buffer size of -1 the OS gives the error "Buffer overflow"
+     (&1E4) for a variable that exists and "not found" (&124) for one that does not.  The output registers are not
+     returned when a SWI gives an error (they were, in the Shared C Library's _kernel_swi, which the original code
+     relied on: it tested R2, which here would be whatever was on the stack). */
+  error = SWI(3, 3, SWI_OS_ReadVarVal, varname, buf, -1, NULL, NULL, &result);
+  if (error == NULL || error->errnum == 0x1E4)
   {
     /* Variable exists, return TRUE */
     returnvalue = TRUE;
@@ -39,12 +43,16 @@ BOOL Environment_SysVarRead(const char *varname, char *buf, int bufsize)
     if (bufsize && buf)
     {
       /* Valid buffer provided, read in the value */
-      SWI(5, 3, SWI_OS_ReadVarVal,
-          varname, buf, bufsize, 0, 0,
-          NULL, NULL, &result);
+      result = 0;
+      error = SWI(5, 3, SWI_OS_ReadVarVal,
+                  varname, buf, bufsize, 0, 0,
+                  NULL, NULL, &result);
 
       /* Ensure correct termination */
-      buf[result] = 0;
+      if (error == NULL && result >= 0 && result < bufsize)
+        buf[result] = 0;
+      else
+        buf[bufsize - 1] = 0;         /* the value did not fit: cut it */
     }
   }
 
@@ -62,7 +70,7 @@ os_error *Environment_SysVarSet(const char *varname, const char *value, sysvar_t
   {
     case sysvar_NUMBER:
       number = atoi(value);
-      error = SWI(5, 0, SWI_OS_SetVarVal, varname, number, 4, 0, type);
+      error = SWI(5, 0, SWI_OS_SetVarVal, varname, &number, 4, 0, type);   /* R1 points at the word (it was passed the number itself) */
       break;
     default:
       error = SWI(5, 0, SWI_OS_SetVarVal, varname, value, length, 0, type);
