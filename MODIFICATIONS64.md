@@ -1,12 +1,12 @@
 # DeskLib64 - every change from DeskLib32, and why
 
-This document lists **every** difference between the source in `src/` and DeskLib32 (Andrew Youll's build of upstream DeskLib: https://github.com/adyoull/desklib32, commit `957863a`), and says what is built from the assembler instead. For each change it gives the problem, the evidence, what was changed, what it means for programs that use the library, and how it was checked. The exact source changes are also in `patches/desklib64-vs-desklib32.diff` (64 modified files and 1 added).
+This document lists **every** difference between the source in `src/` and DeskLib32 (Andrew Youll's build of upstream DeskLib: https://github.com/adyoull/desklib32, commit `957863a`), and says what is built from the assembler instead. For each change it gives the problem, the evidence, what was changed, what it means for programs that use the library, and how it was checked. The exact source changes are also in `patches/desklib64-vs-desklib32.diff` (65 modified files and 1 added).
 
 ---
 
 ## 1. What the source is based on
 
-`src/` is DeskLib32 at `957863a` (638 files): 574 are byte-identical to it, 64 are modified (9 headers, 55 library C files) and 1 is added (`include/dl64.h`). The 259 ARM assembler files (`Libraries/*/*.s`) and their include files are **unchanged and not built**: `gen/` and `hand/` have the same SWI veneers in C (section 3).
+`src/` is DeskLib32 at `957863a` (638 files): 573 are byte-identical to it, 65 are modified (9 headers, 56 library C files) and 1 is added (`include/dl64.h`). The 259 ARM assembler files (`Libraries/*/*.s`) and their include files are **unchanged and not built**: `gen/` and `hand/` have the same SWI veneers in C (section 3).
 
 The target is AArch64 RISC OS 64, with the AArch64 RISC OS GCC 16 tool chain (0.14 or newer) and `-munixlib -O2 -fsigned-char`. On this target `int` and `long` are 32 and 64 bits and a pointer is 64 bits; the Window Manager's data structures are made of 32-bit words.
 
@@ -118,6 +118,16 @@ The validation string is compared with `0` and `0xffffffffu` as words (it is a `
 **Change.** The four loops that add or remove usage for `event_ANY` skip `event_NONZEROPOLLWORD`. A program that wants pollword events still claims that event by name.
 
 **Verification.** `tests/dialogs`, "Old API".
+
+### C9. `Font/ScanString.c` - an address returned through `SWI ()`
+
+**Problem.** `Font_ScanString` passes its `char **end` parameter to `SWI ()` as an output. `SWI ()` stores each output register as a 4 byte `int`, so only the low half of the pointer that `*end` holds is replaced; the top half keeps whatever the caller's variable had.
+
+**Evidence.** `tests/font3` set `end` to `0xDEADBEEF00000000` before the call: it came back as `0xDEADBEEF00049CA9`.
+
+**Change.** The register is taken in an `int` and widened (`(char *) (uintptr_t) (unsigned int)`) before it is stored in `*end`. (`Environment_TaskNameFromHandle` has the same pattern, but initialises its pointer to 0 first, so it is correct.)
+
+**Verification.** `tests/font3`: the end pointer is `string + 9`.
 
 ---
 

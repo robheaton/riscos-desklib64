@@ -27,6 +27,8 @@ All of DeskLib's C (about 270 files) and 259 veneers: 506 objects in `libDeskLib
 * **`clip`** (two tasks from one application): `Clipboard_Claim` and `Clipboard_Request`, received by the other task (the message sizes, the flags, the window and internal handles and the file types), and the same messages sent directly with `Wimp_SendMessage`. The data transfer that follows a request (`Clipboard`'s paste handler) is not implemented by the library and is not tested.
 * **`drag`** (a window with a sprite icon): `DragASprite_DragIcon` (reads the window and icon state, starts the drag with the DragASprite module), `DragASprite_Start` with explicit arguments and `DragASprite_Stop`, and the `user drag ended` event.
 
+* **`font3`** (a desktop task that logs to a file, 12 checks and a window): `Font_ScanString` with `font_scan_BBOX` (plain, doubled, mirrored and turned by a quarter, each checked against the plain box), the end pointer returned through `char **`, `Font_StringWidth`, and `Font_Paint3` with transformation matrices (the same string plain, at twice the size, rotated 30 degrees, mirrored and turned a quarter), all through the `SWI ()` function.
+
 ## Not run yet
 `Print` and `PDriver`, `Url`, `Tinct`, `Serial`. They compile, the veneers were translated or written from the assembler, and the structures have the OS layout, but nobody has run them. If something fails, please open an issue with the function and what happened.
 

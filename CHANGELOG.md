@@ -8,7 +8,8 @@
 * Fixed (hand-written veneer): `Menu_FontMenuDecode` returned NULL because the buffer size was not passed to `Font_DecodeMenu` (MODIFICATIONS64.md section 3).
 * Fixed (also in DeskLib32): `Clipboard_Request` set a message size that the Wimp refuses, so the request was never sent, and `Clipboard_Claim` did not clear its message (MODIFICATIONS64.md C7).
 * Fixed: `Event_Claim (event_ANY, ...)` enabled pollword events although `Event_Poll` passes no pollword, which stopped the older `Dialog` library working (MODIFICATIONS64.md C8).
-* New test applications `tests/dialogs` (`Dialog2`), `tests/save` (`Save`, file icon drag) and `tests/sprite` (`Sprite`) `tests/pane` (`Pane`, `Pane2`) and `tests/msgs` (`MsgTrans`, `Msgs`) `tests/filing` (`File`, `Filing`) `tests/colour` (`ColourTrans`) and `tests/font` (`Font`, `Font2`, font menu) `tests/clear` (`Clear`, `Mem`), `tests/drag` (`DragASpr`) and `tests/clip` (`Clipboard`). `tests/sprite` now fills its canvas (it drew outlines).
+* Fixed: `Font_ScanString` left the top half of the returned end pointer unchanged (MODIFICATIONS64.md C9).
+* New test applications `tests/dialogs` (`Dialog2`), `tests/save` (`Save`, file icon drag) and `tests/sprite` (`Sprite`) `tests/pane` (`Pane`, `Pane2`) and `tests/msgs` (`MsgTrans`, `Msgs`) `tests/filing` (`File`, `Filing`) `tests/colour` (`ColourTrans`) and `tests/font` (`Font`, `Font2`, font menu) `tests/clear` (`Clear`, `Mem`), `tests/drag` (`DragASpr`) `tests/clip` (`Clipboard`) and `tests/font3` (`Font_Paint3`, `Font_ScanString`). `tests/sprite` now fills its canvas (it drew outlines).
 
 ## 0.1 (24 October 2026)
 

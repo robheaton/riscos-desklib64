@@ -16,6 +16,7 @@
 */
 
 
+#include <stdint.h>
 #include "DeskLib:Font.h"
 #include "DeskLib:SWI.h"
 
@@ -33,9 +34,15 @@ os_error *Font_ScanString(font_handle font,
                           font_transformation *transformation,
                           int *length)
 {
-  return SWI(8, 8, SWI_Font_ScanString,
-             font, string, flags, *x, *y, block, transformation, *length,
-             NULL, end, NULL, x, y, NULL, NULL, length);
+  /* r1 on exit is an address: SWI () stores a register as a 4 byte int, so take it in an int and widen it, instead of
+     passing 'end' (a char **, 8 bytes on 64 bits, whose top half would be left as it was) */
+  int endaddr = 0;
+  os_error *e = SWI(8, 8, SWI_Font_ScanString,
+                    font, string, flags, *x, *y, block, transformation, *length,
+                    NULL, &endaddr, NULL, x, y, NULL, NULL, length);
+  if (end != NULL)
+    *end = (char *) (uintptr_t) (unsigned int) endaddr;
+  return e;
 }
 
 
