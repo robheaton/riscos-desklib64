@@ -4,7 +4,7 @@
 
 * Fixed: a "no validation string" value (`-1`, stored as `0xffffffff` in a `dl_ptr`) was treated as a pointer in `Template_Clone`, `Template_Free`, `Menu_FullDispose` and `Icon_FindValidationStringCommand` (MODIFICATIONS64.md C5).
 * Fixed (translator): `LDM` with the base register in the register list loaded the base first and used the new value for the later loads. Affected `Sprite_UnRedirect`, `Wimp_ForceRedraw`, `Wimp_SetCaretPosition`, `Wimp_BlockCopy` and `PDriver_InsertIllustration` (MODIFICATIONS64.md section 3).
-* New test applications `tests/dialogs` (`Dialog2`), `tests/save` (`Save`, file icon drag) and `tests/sprite` (`Sprite`).
+* New test applications `tests/dialogs` (`Dialog2`), `tests/save` (`Save`, file icon drag) and `tests/sprite` (`Sprite`) and `tests/pane` (`Pane`, `Pane2`).
 
 ## 0.1 (24 October 2026)
 
