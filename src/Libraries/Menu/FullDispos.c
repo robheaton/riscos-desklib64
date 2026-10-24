@@ -38,7 +38,7 @@ void Menu_FullDispose(menu_ptr menu)
     {
       free(((char *) DL_P (items[index].icondata.indirecttext.buffer)));
 
-      if ((intptr_t) ((char *) DL_P (items[index].icondata.indirecttext.validstring)) > 0)
+      if ((intptr_t) ((char *) DL_P (items[index].icondata.indirecttext.validstring)) > 0 && items[index].icondata.indirecttext.validstring != 0xFFFFFFFFu)
         free(((char *) DL_P (items[index].icondata.indirecttext.validstring)));
     }
 

@@ -79,6 +79,16 @@ What the generated veneers include: the declarations of `swi_x` and `swi_f` (the
 
 The validation string is compared with `0` and `0xffffffffu` as words (it is a `dl_ptr`).
 
+### C5. `Template/Clone.c`, `Template/Free.c`, `Menu/FullDispos.c`, `Icon/Validation.c` - "no validation string" is not a pointer
+
+**Problem.** DeskLib uses a validation-string value of `-1` for "none". On 32 bits `(intptr_t) p > 0` is false for it, so the code does not free it. In the `dl_ptr` field the value is `0xffffffff`, which is positive as a 64-bit `intptr_t`, so `Template_Clone` copied from address `0xffffffff` and `Template_Free`, `Menu_FullDispose` and `Icon_FindValidationStringCommand` treated it as a real string.
+
+**Evidence.** A dialogue box built from a template with indirected icons that have no validation string ended in a data abort in `malloc` after the window was freed; with the four comparisons changed the abort does not happen.
+
+**Change.** Each of the four tests also compares the word with `0xFFFFFFFFu`.
+
+**Verification.** `tests/dialogs` opens, fills and closes dialogue boxes made from such a template many times.
+
 ---
 
 ## 3. Assembler sources

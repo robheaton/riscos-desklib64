@@ -83,7 +83,7 @@ extern window_block *Template_Clone(const char *name, int maxtitlesize)
                icons[icon].data.indirecttext.bufflen - 1] = 0;
 
       oldtext = ((char *) DL_P (icons[icon].data.indirecttext.validstring));
-      if ((intptr_t)oldtext > 0)
+      if ((intptr_t)oldtext > 0 && (uintptr_t)oldtext != 0xFFFFFFFFu)   /* a stored -1 means no validation string */
       {
         int size;
 

@@ -37,7 +37,7 @@ extern void Template_Free(window_block **windowdef)
     if (icons[icon].flags.data.indirected && icons[icon].flags.data.text)
     {
       free(((char *) DL_P (icons[icon].data.indirecttext.buffer)));
-      if ((intptr_t) ((char *) DL_P (icons[icon].data.indirecttext.validstring)) > 0)
+      if ((intptr_t) ((char *) DL_P (icons[icon].data.indirecttext.validstring)) > 0 && icons[icon].data.indirecttext.validstring != 0xFFFFFFFFu)
         free(((char *) DL_P (icons[icon].data.indirecttext.validstring)));
     }
   }

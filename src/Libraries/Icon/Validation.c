@@ -29,7 +29,7 @@ extern int Icon_FindValidationStringCommand(const char *string, char tag, int *l
 {
   int index;
 
-  if (string == NULL || (intptr_t)string == -1)
+  if (string == NULL || (intptr_t)string == -1 || (uintptr_t)string == 0xFFFFFFFFu)
     return Icon_NoValidationCommand;
 
   tag = tag & 255;
