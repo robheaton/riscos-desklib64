@@ -20,11 +20,13 @@ All of DeskLib's C (about 270 files) and 259 veneers: 506 objects in `libDeskLib
 
 * **`colour`** (a desktop task that logs to a file, 21 checks): `ColourTrans_SetGCOL` (the colours read back from a sprite that `GFX_RectangleFill` drew into after `Sprite_Redirect`), `ReturnColourNumberForMode` (current mode and a sprite mode), `SelectTable`, `InvalidateCache`, `ReturnFontColours` and `SetFontColours` for the current font.
 
+* **`font`** (a desktop task that logs to a file, 36 checks and a window): `Font_CacheAddr`, `ListFonts` (all fonts), `GetWimpFont`, `FindFont`, `ReadDefn`, `ReadInfo`, `SetFont`, `CurrentFont`, `ReadScaleFactor`, `StringWidth` (with the `dl_ptr` in `font_string`), `StringBBox`, `ConvertToOS` and `ConvertToPoints`, `LoseFont`; `Font2` claim, reclaim and release; `Font_Paint` of text in four fonts in a redraw handler; the font menu (`Menu_FontMenu` with a tick, shown with `Menu_Show`; `Menu_FontMenuDecode` on a selection; the chosen font is painted).
+
 ## Known problems
 * The older `Dialog` library (`Dialog_WaitForClick`) does not return in testing: the task stops receiving events. It has not been explained yet. `Dialog2` is not affected and is the one to use.
 
 ## Not run yet
-`DragASpr`, `Font` and the font menu, `Print` and `PDriver`, `Clear`, `Clipboard`, `Url`, `Tinct`, `Serial`. They compile, the veneers were translated or written from the assembler, and the structures have the OS layout, but nobody has run them. If something fails, please open an issue with the function and what happened.
+`DragASpr`, `Print` and `PDriver`, `Clear`, `Clipboard`, `Url`, `Tinct`, `Serial`. They compile, the veneers were translated or written from the assembler, and the structures have the OS layout, but nobody has run them. If something fails, please open an issue with the function and what happened.
 
 ## Known limits
 * Arguments after the fourth to the translated veneers and structures passed by value are assumed to fit a 32-bit word (see docs/PORTING.md).

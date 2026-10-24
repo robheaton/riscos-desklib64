@@ -51,7 +51,7 @@ char *Menu_FontMenuDecode (int *selection)
     answer_size = need;
   }
   memset (r, 0, sizeof r);
-  r[0] = 0; r[1] = (uintptr_t) fontmenu_def; r[2] = (uintptr_t) selection; r[3] = (uintptr_t) answer;
+  r[0] = 0; r[1] = (uintptr_t) fontmenu_def; r[2] = (uintptr_t) selection; r[3] = (uintptr_t) answer; r[4] = need;	/* r4 is the size of the buffer (the assembler left it from the first call) */
   if (swi_x (0x400A0 | X, r)) return 0;
   return (char *) answer;
 }
