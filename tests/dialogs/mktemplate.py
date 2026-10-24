@@ -19,11 +19,12 @@ LAB  = 0x07000011                                        # text, vcentred
 def entry(name, data, base):
     return struct.pack('<3i', base, len(data), 1) + name.ljust(12, b'\0')
 # window "main"
-main  = winhdr((300,300,900,640), (0,-340,600,0), 'DLDialogs', 4)
+main  = winhdr((300,300,900,640), (0,-340,600,0), 'DLDialogs', 5)
 main += icon(20,-60,580,-20, 0x07000009 | (1 << 4), 'Dialogs')
 main += icon(20,-140,280,-90, BTN, 'Static')
 main += icon(320,-140,580,-90, BTN, 'Transient')
-main += icon(20,-220,280,-170, BTN, 'Quit')
+main += icon(20,-220,280,-170, BTN, 'Old API')
+main += icon(320,-220,580,-170, BTN, 'Quit')
 # window "dlg": the indirected data follows the 9 icons (header 88 + 9*32 = 376)
 HDR = 88; N = 8; base = HDR + N * 32
 name_buf  = base;        name_val = base + 32          # 32 bytes of buffer, then the validation string

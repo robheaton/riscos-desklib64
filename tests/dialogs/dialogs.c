@@ -1,5 +1,6 @@
 /* dialogs.c - DeskLib64 test: Dialog2 (static, transient and menu-leaf dialogue boxes) with indirected writable, option and radio icons loaded from a template file.
-   What happens is shown in the status line and appended to <Wimp$ScrapDir>.dlgtest.  (The older Dialog library is not tested here: see docs/STATUS.md.) */
+   The older Dialog library (Dialog_Create, Dialog_ShowStatic, Dialog_WaitForClick) is used by the Old API button.
+   What happens is shown in the status line and appended to <Wimp$ScrapDir>.dlgtest. */
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -14,13 +15,15 @@
 #include "DeskLib:Menu.h"
 #include "DeskLib:Dialog.h"
 #include "DeskLib:Dialog2.h"
+#include "DeskLib:Dialog.h"
 #include "DeskLib:Resource.h"
 #include "DeskLib:Template.h"
 #include "DeskLib:Error.h"
 
 #define B_STATIC 1
 #define B_TRANS 2
-#define B_QUIT 3
+#define B_OLD 3
+#define B_QUIT 4
 #define D_NAME 1
 #define D_SHOUT 2
 #define D_RED 3
@@ -69,6 +72,20 @@ static BOOL click_handler (event_pollblock *event, void *reference)
   {
     case B_STATIC: Dialog2_OpenDialogStatic (dstatic, open_CENTERED); break;
     case B_TRANS: Dialog2_OpenDialogMenu (dtrans, open_UNDERPOINTER); break;
+    case B_OLD:
+    {
+      dialog d = Dialog_Create ("dlg", 20);
+      int icon;
+      char name[40];
+      if (!d) { say ("old Dialog: Dialog_Create failed"); break; }
+      Dialog_ShowStatic (d, open_CENTERED);
+      icon = Dialog_WaitForClick (d);
+      Icon_GetText (d->window, D_NAME, name);
+      say ("old Dialog: icon %d name=%s shout=%d colour=%d", icon, name, Icon_GetSelect (d->window, 2), Icon_WhichRadio (d->window, D_RED, D_BLUE) - D_RED);
+      Dialog_Hide (d);
+      Dialog_Destroy (d);
+      break;
+    }
     case B_QUIT: quit (); break;
   }
   return TRUE;

@@ -1,12 +1,12 @@
 # DeskLib64 - every change from DeskLib32, and why
 
-This document lists **every** difference between the source in `src/` and DeskLib32 (Andrew Youll's build of upstream DeskLib: https://github.com/adyoull/desklib32, commit `957863a`), and says what is built from the assembler instead. For each change it gives the problem, the evidence, what was changed, what it means for programs that use the library, and how it was checked. The exact source changes are also in `patches/desklib64-vs-desklib32.diff` (63 modified files and 1 added).
+This document lists **every** difference between the source in `src/` and DeskLib32 (Andrew Youll's build of upstream DeskLib: https://github.com/adyoull/desklib32, commit `957863a`), and says what is built from the assembler instead. For each change it gives the problem, the evidence, what was changed, what it means for programs that use the library, and how it was checked. The exact source changes are also in `patches/desklib64-vs-desklib32.diff` (64 modified files and 1 added).
 
 ---
 
 ## 1. What the source is based on
 
-`src/` is DeskLib32 at `957863a` (638 files): 575 are byte-identical to it, 63 are modified (9 headers, 54 library C files) and 1 is added (`include/dl64.h`). The 259 ARM assembler files (`Libraries/*/*.s`) and their include files are **unchanged and not built**: `gen/` and `hand/` have the same SWI veneers in C (section 3).
+`src/` is DeskLib32 at `957863a` (638 files): 574 are byte-identical to it, 64 are modified (9 headers, 55 library C files) and 1 is added (`include/dl64.h`). The 259 ARM assembler files (`Libraries/*/*.s`) and their include files are **unchanged and not built**: `gen/` and `hand/` have the same SWI veneers in C (section 3).
 
 The target is AArch64 RISC OS 64, with the AArch64 RISC OS GCC 16 tool chain (0.14 or newer) and `-munixlib -O2 -fsigned-char`. On this target `int` and `long` are 32 and 64 bits and a pointer is 64 bits; the Window Manager's data structures are made of 32-bit words.
 
@@ -108,6 +108,16 @@ The validation string is compared with `0` and `0xffffffffu` as words (it is a `
 **Change.** The size is `44 + 4 * num`, and `Clipboard_Claim` clears its message.
 
 **Verification.** Both messages arrive, with the file types and the internal handle intact.
+
+### C8. `Event/Event.c` - `event_ANY` claims enabled pollword events
+
+**Problem.** `Event_Claim (event_ANY, ...)` (which `Dialog_Create` uses for its window) enables every event type except null, including `event_NONZEROPOLLWORD`. Enabling that type sets bit 22 of the poll mask, which tells the Window Manager that register 3 of `Wimp_Poll` points to a pollword, but `Event_Poll` always passes 0. The Wimp is then told to read a pollword at address 0.
+
+**Evidence.** In `tests/dialogs`, the older `Dialog` button (`Dialog_Create`, `Dialog_ShowStatic`, `Dialog_WaitForClick`) stopped the task and left the Window Manager not responding; `Dialog2`, which claims specific events only, did not. After the change the button works: the box opens, the fields are read back and the box is destroyed.
+
+**Change.** The four loops that add or remove usage for `event_ANY` skip `event_NONZEROPOLLWORD`. A program that wants pollword events still claims that event by name.
+
+**Verification.** `tests/dialogs`, "Old API".
 
 ---
 

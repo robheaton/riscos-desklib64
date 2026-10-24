@@ -335,7 +335,7 @@ extern BOOL Event_Claim(event_type eventtype,
         result = TRUE;
 
         for (index = 1; index < event_MAXEVENTS; index++)
-          if (eventclass[index] != nonexistent)
+          if (eventclass[index] != nonexistent && index != event_NONZEROPOLLWORD)
             IncrementUsage( (event_type) index);
       }
       else
@@ -367,7 +367,7 @@ extern BOOL Event_Claim(event_type eventtype,
 
             /* NULL events are not included in "event_ANY", so start from 1 */
             for (index = 1; index < event_MAXEVENTS; index++)
-              if (eventclass[index] != nonexistent)
+              if (eventclass[index] != nonexistent && index != event_NONZEROPOLLWORD)
                 IncrementUsage ( (event_type) index);
           }
           else
@@ -397,7 +397,7 @@ extern BOOL Event_Claim(event_type eventtype,
 
               /* NULL events are not included in "event_ANY" so start from 1 */
               for (index = 1; index < event_MAXEVENTS; index++)
-                if (eventclass[index] != nonexistent)
+                if (eventclass[index] != nonexistent && index != event_NONZEROPOLLWORD)
                   IncrementUsage( (event_type) index);
             }
             else
@@ -432,7 +432,7 @@ static void LoseClaim(linklist_header *listheader,
   {
     /* "event_ANY" does not include event_NULL, so start from 1 */
     for (index = 1; index < wimp_NUMBEROFEVENTS; index++)
-      if (eventclass[index] != nonexistent)
+      if (eventclass[index] != nonexistent && index != event_NONZEROPOLLWORD)
               DecrementUsage( (event_type) index);
   }
   else
