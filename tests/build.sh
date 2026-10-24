@@ -20,5 +20,6 @@ done
 $CC $FLAGS "$HERE/sprite/spritetest.c" "$R/dist/lib/libDeskLib64.a" -o "$A/spritetest,ff8"
 $CC $FLAGS "$HERE/filing/filetest.c" "$R/dist/lib/libDeskLib64.a" -o "$A/filetest,ff8"
 $CC $FLAGS "$HERE/colour/colourtest.c" "$R/dist/lib/libDeskLib64.a" -o "$A/colourtest,ff8"
+$CC $FLAGS "$HERE/clear/cleartest.c" "$R/dist/lib/libDeskLib64.a" -o "$A/cleartest,ff8"
 mkdir -p "$A/msgtest"; $CC $FLAGS "$HERE/msgs/msgtest.c" "$R/dist/lib/libDeskLib64.a" -o "$A/msgtest/msgtest,ff8"; cp "$HERE/msgs/Messages" "$A/msgtest/Messages,fff"; cp "$HERE/msgs/Msgs" "$A/msgtest/Msgs,fff"
-echo "built $A/!DLHello, !DLDemo2, !DLDialogs, !DLSave, !DLSprite, !DLPane, !DLFont, spritetest,ff8, filetest,ff8, colourtest,ff8 and msgtest/"
+echo "built $A/!DLHello, !DLDemo2, !DLDialogs, !DLSave, !DLSprite, !DLPane, !DLFont, spritetest,ff8, filetest,ff8, colourtest,ff8, cleartest,ff8 and msgtest/"
