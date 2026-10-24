@@ -1,6 +1,8 @@
 # DeskLib64 - Changelog
 
-## Unreleased
+## 0.4 (24 October 2026)
+
+No change to the library. New: `ports/` (builds the eleven example applications of upstream DeskLib for RISC OS 64, with one small patch for `!FontDemo`) and a rewritten `docs/PORTING.md`.
 
 * `docs/PORTING.md` rewritten from what the tests and the upstream examples showed: `SWI ()` outputs, what a SWI returns on an error, unsigned bytes, the language level, reads at address 0, names the C library has, resources and the application folder, and how to find a crash.
 * New `ports/build-examples.sh`: builds the example applications of upstream DeskLib for RISC OS 64 (one small patch for `!FontDemo`); see `ports/README.md`.
