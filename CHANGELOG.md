@@ -1,6 +1,8 @@
 # DeskLib64 - Changelog
 
-## Unreleased
+## 0.3 (24 October 2026)
+
+Four more test programs (`sprite2test`, `gaps`, `gaps2`, `gaps3`), two more fixes (MODIFICATIONS64.md C16 and C17) and a coverage report: the tests now reach 479 of the 619 library functions (`docs/COVERAGE.md`, made by `tools/coverage.py`). `src/` is still 71 modified files and 1 added; `gen/` is 239 files because `Sprite_AppendP` is now written by hand.
 
 * New test `tests/gaps3` (a desktop task, 27 checks): window help (`Window_AutoHelp` answering a help request that the test sends to its own task), `Menu_PopUp`, `PopUpAuto` and `Warn`, `Icon_BarIconUser`, `Icon_ButtonIsHeld`, `Icon_FindValidationStringCommand`, `Wimp_Enumerate`, `Wimp_ReadPixTrans` and `Font_FindCaret`, `FindCaretJ` and `Caret`. No library change was needed.
 * New test `tests/gaps2` (a desktop task, 50 checks): Pane2 (handles, numbers from 1, variables, flags, open, hide, delete), Pane (Link, SetFlags, Show, Hide, Delete), the Handler functions (called with events made by the test), Resource (automatic path, path, sprites, choices) and the rest of the Font functions. No library change was needed.
