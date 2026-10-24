@@ -2,7 +2,7 @@
 
 Made by `tools/coverage.py`. A function is **called** if a test program calls it, and **reached** if a test calls it or a function that it calls does (so `Wimp_Poll`, which `Event_Poll` calls, counts). Reached means the test code can run it, not that its result was checked: `docs/STATUS.md` says what each test checks.
 
-**329 of 619 library functions are reached (262 are called directly).**
+**366 of 619 library functions are reached (299 are called directly).**
 
 | Module | Called | Reached | Total | Not reached |
 |---|---:|---:|---:|---|
@@ -51,7 +51,7 @@ Made by `tools/coverage.py`. A function is **called** if a test program calls it
 | Screen | 2 | 2 | 2 |  |
 | Serial | 0 | 0 | 15 | Activate, Deactivate, GetByte, GetFormat, GetRxRate, GetStatus, GetTxRate, NonZeroPollWordOnReceive, PutByte, SendBreak, SetFormat, SetRxRate, SetStatus, SetTxRate, _NZPWORRemove |
 | Slider | 4 | 4 | 4 |  |
-| Sprite | 26 | 27 | 76 | Append, AppendP, CopyP, CreateMaskP, CreatePalette, CreatePaletteP, DeleteColumn, DeleteColumnP, DeleteP, DeleteRow, DeleteRowP, FlipXP, FlipYP, Get, IconMemorySize, InsertColumn, InsertColumnP, InsertRow, InsertRowP, LoadFiles, MemorySize, MemorySizeBpp, Merge, PlotGreyP, PlotMaskP, PlotMaskScaled, PlotMaskScaledP, PlotP, PlotScaledP, ReadInfoP, ReadMaskPixelP, ReadPaletteSize, ReadPaletteSizeP, ReadPixelP, RedirectMask, RedirectMaskP, RedirectP, RemoveMaskP, RemovePalette, RemovePaletteP, RenameP, ScreenLoad, ScreenSave, SelectP, SetPointerShape, SetPointerShapeP, WimpPlot, WriteMaskPixelP, WritePixelP |
+| Sprite | 63 | 64 | 76 | IconMemorySize, PlotGreyP, PlotMaskP, PlotMaskScaled, PlotMaskScaledP, PlotP, PlotScaledP, RedirectMask, RedirectMaskP, RedirectP, ScreenLoad, WimpPlot |
 | Str | 5 | 5 | 5 |  |
 | TaskWindow | 6 | 6 | 6 |  |
 | Template | 2 | 5 | 11 | ClearAll, Delete, Find, LinkSpriteArea, UseOutlineFonts, UseSpriteArea |

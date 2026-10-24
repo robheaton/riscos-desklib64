@@ -8,7 +8,7 @@ upstream DeskLib master `f7469f4` with a few fixes) and changes only what 64 bit
 need: the structures that the Window Manager reads and writes keep their 32-bit
 layout, and DeskLib's ARM assembler veneers are C.
 
-**Status: early.** The library builds in full (506 objects). Nineteen demonstration
+**Status: early.** The library builds in full (505 objects). Nineteen demonstration
 and test applications (`tests/hello`, `demo2`, `dialogs`, `save`, `sprite`, `pane`, `msgs`, `filing`, `colour`, `font`, `font3`, `clear`, `drag`, `clip`, `env`, `misc`, `menu2`, `controls`, `taskwindow`) exercise the event
 system, windows, template files, icons, menus, `Dialog2` dialogue boxes, the `Save`
 library with file icon drag, the `Sprite` library and panes (`Pane`, `Pane2`) and message files (`MsgTrans`, `Msgs`) files (`File`, `Filing`) colour (`ColourTrans`) and fonts with the font menu (`Font`, `Font2`). A good deal of DeskLib (printing, fonts ...)
@@ -35,7 +35,7 @@ not built (their SWI veneers are translated to C instead):
 | C1 | 30 files in `Libraries/` | uses of the `dl_ptr` fields: `DL_P (x)` to read, `x = DL_PTR (v)` to write |
 | C2 | 32 files in `Libraries/` | `(int)` casts of pointers became `(intptr_t)` (a pointer through `int` loses its top half and, from 2 GB up, its sign) |
 | C3 | `Libraries/Template/Delete.c`, `Libraries/Str/LeafName.c` | `free (t->windowdef)`, not `free (&t->windowdef)`; a needless pointer cast removed |
-| A1 | `gen/` | 240 ARM assembler veneers translated to C by `tools/armv2c.py` |
+| A1 | `gen/` | 239 ARM assembler veneers translated to C by `tools/armv2c.py` |
 | A2 | `hand/` | the other veneers, and `Mem`, written by hand from the assembler |
 
 Not built: `BackTrace` (it needs Norcroft's stack unwinding), `PCI` and `USB` (hardware specific).

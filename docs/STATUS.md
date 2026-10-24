@@ -1,7 +1,7 @@
 # Status
 
 ## Built
-All of DeskLib's C (about 270 files) and 259 veneers: 506 objects in `libDeskLib64.a`, no failures, no pointer-size warnings. Not built: `BackTrace`, `PCI`, `USB`.
+All of DeskLib's C (about 270 files) and 259 veneers: 505 objects in `libDeskLib64.a`, no failures, no pointer-size warnings. Not built: `BackTrace`, `PCI`, `USB`.
 
 ## Run (the demonstration applications in `tests/`)
 * **`hello`**: `Event_Initialise`, `EventMsg_Initialise`, `Wimp_CreateWindow`, `Wimp_CreateIcon` (an indirected text icon), `Event_Claim` handlers for click, close and open, `Window_Show`, `Event_Poll`, `Icon_Printf`, `Event_CloseDown`.
@@ -40,6 +40,8 @@ All of DeskLib's C (about 270 files) and 259 veneers: 506 objects in `libDeskLib
 * **`taskwindow`** (a window that logs to a file, and a helper program): `TaskWindow_Start` (a command with output, an output function that receives the text, a "died" function), a program reading its input from the task window (`TaskWindow_SendInput`, the program's own `TaskWindow_Check` is non-zero, the caller's is 0), `TaskWindow_Suspend` (the program's output is held), `TaskWindow_Resume` and `TaskWindow_Kill` (the "died" function is called). The task handle that `TaskWindow_Start` returns was 0 in the test; the handle of the new task comes in the `message_TASKWINDOW_EGO` message (the test claims it as well as the library).
 
 See `docs/COVERAGE.md` (made by `tools/coverage.py`) for the list of library functions that no test program calls.
+
+* **`sprite2test`** (command line, 80 checks): the pointer forms of the Sprite functions (`SelectP`, `ReadInfoP`, `ReadPixelP`, `WritePixelP`, `CopyP`, `RenameP`, `FlipXP`, `FlipYP`, `CreateMaskP`, `RemoveMaskP`, `DeleteP`, mask pixels), `InsertRow`, `DeleteRow`, `InsertColumn`, `DeleteColumn` (named and pointer), `Append` and `AppendP` in both directions, 8 bit palettes (`CreatePalette`, `ReadPaletteSize`, `RemovePalette`, named and pointer), `MemorySize`, `MemorySizeBpp`, `Get` (a part of the screen, with the returned pointer checked), `ScreenSave`, `Merge`, `LoadFiles`. The pointer shape functions gave an error at the display depth used and are not checked.
 
 ## Not run yet
 `Print` and `PDriver`, `Url`, `Tinct`, `Serial`, `Filter` (its handler is called with registers, so it needs an assembler-style entry point that has not been written) and `Kbd_GET`. They compile, the veneers were translated or written from the assembler, and the structures have the OS layout, but nobody has run them. If something fails, please open an issue with the function and what happened.

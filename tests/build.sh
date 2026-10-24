@@ -18,6 +18,7 @@ for t in dialogs:DLDialogs save:DLSave sprite:DLSprite pane:DLPane font:DLFont f
   python3 "$HERE/$d/mktemplate.py" "$A/!$n/Templates,fec"
 done
 $CC $FLAGS "$HERE/sprite/spritetest.c" "$R/dist/lib/libDeskLib64.a" -o "$A/spritetest,ff8"
+$CC $FLAGS "$HERE/sprite/sprite2test.c" "$R/dist/lib/libDeskLib64.a" -o "$A/sprite2test,ff8"
 $CC $FLAGS "$HERE/filing/filetest.c" "$R/dist/lib/libDeskLib64.a" -o "$A/filetest,ff8"
 $CC $FLAGS "$HERE/colour/colourtest.c" "$R/dist/lib/libDeskLib64.a" -o "$A/colourtest,ff8"
 $CC $FLAGS "$HERE/clear/cleartest.c" "$R/dist/lib/libDeskLib64.a" -o "$A/cleartest,ff8"
@@ -28,4 +29,4 @@ cp "$HERE/menu2/!Run,feb" "$HERE/menu2/!Boot,feb" "$A/!DLMenu2/"; $CC $FLAGS "$H
 cp "$HERE/controls/!Run,feb" "$HERE/controls/!Boot,feb" "$A/!DLControls/"; $CC $FLAGS "$HERE/controls/controls.c" "$R/dist/lib/libDeskLib64.a" -o "$A/!DLControls/!RunImage,ff8"
 cp "$HERE/taskwindow/!Run,feb" "$HERE/taskwindow/!Boot,feb" "$A/!DLTaskWindow/"; $CC $FLAGS "$HERE/taskwindow/taskwindow.c" "$R/dist/lib/libDeskLib64.a" -o "$A/!DLTaskWindow/!RunImage,ff8"; $CC $FLAGS "$HERE/taskwindow/twecho.c" "$R/dist/lib/libDeskLib64.a" -o "$A/!DLTaskWindow/twecho,ff8"
 mkdir -p "$A/msgtest"; $CC $FLAGS "$HERE/msgs/msgtest.c" "$R/dist/lib/libDeskLib64.a" -o "$A/msgtest/msgtest,ff8"; cp "$HERE/msgs/Messages" "$A/msgtest/Messages,fff"; cp "$HERE/msgs/Msgs" "$A/msgtest/Msgs,fff"
-echo "built $A/!DLHello, !DLDemo2, !DLDialogs, !DLSave, !DLSprite, !DLPane, !DLFont, !DLFont3, !DLDrag, !DLClip, !DLMenu2, !DLControls, !DLTaskWindow, spritetest,ff8, filetest,ff8, colourtest,ff8, cleartest,ff8, envtest,ff8, misctest,ff8 and msgtest/"
+echo "built $A/!DLHello, !DLDemo2, !DLDialogs, !DLSave, !DLSprite, !DLPane, !DLFont, !DLFont3, !DLDrag, !DLClip, !DLMenu2, !DLControls, !DLTaskWindow, spritetest,ff8, sprite2test,ff8, filetest,ff8, colourtest,ff8, cleartest,ff8, envtest,ff8, misctest,ff8 and msgtest/"

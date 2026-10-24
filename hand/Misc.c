@@ -1,5 +1,5 @@
-/* Misc.c - seven veneers that return a pointer through a pointer parameter (the ARM code stored a 32 bit word there; here the whole 64 bit pointer is stored) or read arguments from the
-   stack through ip: Environment_ExpandString, MessageTrans_Lookup, Module_Claim, Sprite_Get, Sprite_ReadControl, Sprite_Select, Wimp_BaseOfSprites.  Written from the assembler files. */
+/* Misc.c - eight veneers that return a pointer through a pointer parameter (the ARM code stored a 32 bit word there; here the whole 64 bit pointer is stored) or read arguments from the
+   stack through ip: Environment_ExpandString, MessageTrans_Lookup, Module_Claim, Sprite_AppendP, Sprite_Get, Sprite_ReadControl, Sprite_Select, Wimp_BaseOfSprites.  Written from the assembler files. */
 #include <stdint.h>
 #include "dl64.h"
 #define X 0x20000
@@ -53,6 +53,17 @@ int Sprite_ReadControl (sprite_area area, int *size, sprite_header **first, spri
   if (first) *first = (sprite_header *) ((char *) area + (uint32_t) r[4]);
   if (free) *free = (sprite_header *) ((char *) area + (uint32_t) r[5]);
   return (int) (uint32_t) r[3];
+}
+
+/* OS_SpriteOp 35 with the pointer form takes the address of the second sprite too; the DeskLib assembler passed its name, which the OS refuses ("Can't append sprite").  The second sprite is looked up by name first. */
+os_error *Sprite_AppendP (sprite_area area, sprite_header *sprite1, const char *name2, int dir)
+{
+  uint64_t r[10] = { 0 };
+  r[0] = 256 + 24; r[1] = (uintptr_t) area; r[2] = (uintptr_t) name2;
+  if (swi_x (0x2E | X, r)) return ERR (r);				/* OS_SpriteOp 24: select name2 */
+  r[3] = r[2]; r[0] = 512 + 35; r[1] = (uintptr_t) area; r[2] = (uintptr_t) sprite1; r[4] = (uint32_t) dir;
+  if (swi_x (0x2E | X, r)) return ERR (r);				/* OS_SpriteOp 35, pointer form: R2 and R3 are both sprite pointers */
+  return 0;
 }
 
 os_error *Sprite_Select (sprite_area area, const char *name, sprite_header **result)

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+* Fixed (also in DeskLib32): `Sprite_AppendP` passed the second sprite by name to the pointer form of `OS_SpriteOp 35`, which refuses it ("Can't append sprite"); the second sprite is now looked up first (MODIFICATIONS64.md C16).
+* New test `tests/sprite/sprite2test.c` (command line, 80 checks): the pointer forms of the Sprite functions, rows and columns, `Append`, palettes, `MemorySize`, `Get` from the screen, `ScreenSave`, `Merge`, `LoadFiles`.
 * New `tools/coverage.py` and `docs/COVERAGE.md`: which library functions the test programs reach.
 
 ## 0.2 (24 October 2026)

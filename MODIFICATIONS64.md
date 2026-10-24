@@ -187,20 +187,30 @@ The validation string is compared with `0` and `0xffffffffu` as words (it is a `
 
 **Verification.** `tests/taskwindow`: the program reads exactly `ping one`, and later exactly `second`.
 
+### C16. `Sprite_AppendP` - the second sprite is passed by name
+
+**Problem.** `Sprite_AppendP (area, sprite1, name2, dir)` calls `OS_SpriteOp 512 + 35` with the address of `sprite1` in R2 and the name of the second sprite in R3. The pointer form of the call takes the address of the second sprite too, and refuses a name: "SpriteExtend: Can't append sprite" (this is in DeskLib32's assembler as well).
+
+**Evidence.** `tests/sprite/sprite2test.c`: `Sprite_Append` (by name) joined two sprites, `Sprite_AppendP` gave the error in both directions; calling `OS_SpriteOp` directly with two addresses worked.
+
+**Change.** The function is written by hand (`hand/Misc.c`): it looks the second sprite up with `OS_SpriteOp 24` and passes both addresses. The prototype is unchanged. (The generated `gen/Sprite/35AppendP.c` is removed.)
+
+**Verification.** `tests/sprite/sprite2test.c`: `Sprite_AppendP` joins horizontally and vertically, the second sprite is deleted and the size is the sum.
+
 ---
 
 ## 3. Assembler sources
 
 DeskLib's SWI veneers are 259 small ARM assembler files: they move the arguments into the right registers, make one SWI call and store the results. They cannot be assembled for AArch64. They are **not changed and not built**; their function is in C:
 
-* **`gen/` (240 files)** is made by `tools/armv2c.py` from the `.s` files: the registers are 64-bit variables, the flags are variables, the stack is an array of words (so that `ip` and `sp` are real addresses), a SWI is `swi_f` (which also returns the flags, for the veneers that test carry or zero), and the C prototype comes from DeskLib's own header. Loads and stores of words are 32-bit, as the OS data are. Arguments after the fourth are on the stack, as in the ARM calling convention. `REGEN=1 ./build.sh` makes `gen/` again.
+* **`gen/` (239 files)** is made by `tools/armv2c.py` from the `.s` files: the registers are 64-bit variables, the flags are variables, the stack is an array of words (so that `ip` and `sp` are real addresses), a SWI is `swi_f` (which also returns the flags, for the veneers that test carry or zero), and the C prototype comes from DeskLib's own header. Loads and stores of words are 32-bit, as the OS data are. Arguments after the fourth are on the stack, as in the ARM calling convention. `REGEN=1 ./build.sh` makes `gen/` again.
   **A translator bug found by `tests/sprite` (fixed):** for `LDMIA r0, {r0, r1, r2, r3}` (the base register is in the list) the first version loaded `r0` and then used the new `r0` as the base for the next loads. The ARM instruction takes all the addresses from the old value. The translator now keeps the base in a temporary when it is in the list of an `LDM`. Five veneers changed: `Sprite_UnRedirect` (its first load used a garbage address and the task aborted), `Wimp_ForceRedraw`, `Wimp_SetCaretPosition`, `Wimp_BlockCopy` and `PDriver_InsertIllustration`.
 * **`hand/` (written by hand from the assembler)**: `File.c` (the File functions and `File_GetType`), `Filing.c`, `Str.c`, `Screen.c`, `DragASpr.c`, `Menu.c` (the font menu), `Misc.c` (functions that return a pointer through a pointer parameter, or read their arguments from the stack through `ip`: the ARM code stored a 32-bit word, here the whole pointer is stored) and `Mem.c`. They are the veneers that have branches or data tables, or that the translator cannot do correctly.
   **A bug in `hand/Menu.c` found by `tests/font` (fixed):** `Menu_FontMenuDecode` made the second `Font_DecodeMenu` call with the buffer size (`r4`) cleared; the assembler kept the size from the first call in `r4`. The OS then returned an error and the function returned NULL for every selection. It now passes the size.
 * **`Mem`** (the relocatable memory manager) is a small version on `malloc` in `hand/Mem.c`: the blocks never move, `Mem_Compact` does nothing and an anchor only changes when its block is allocated, resized or freed. The original builds its own heap above the program's slot with a Norcroft hook and keeps pointers in integers.
 * **Not built:** `BackTrace` (Norcroft's stack unwinding), `PCI` and `USB`.
 
-**Verification.** All 506 objects build. `hello` and `demo2` run: they use `Wimp_Initialise`, `Wimp_CreateWindow`, `Wimp_CreateIcon`, `Wimp_Poll`, `Wimp_OpenWindow`, `Wimp_CloseDown`, the Template and Menu code and `Icon_Printf`. The other veneers have been compiled but not run (docs/STATUS.md).
+**Verification.** All 505 objects build. `hello` and `demo2` run: they use `Wimp_Initialise`, `Wimp_CreateWindow`, `Wimp_CreateIcon`, `Wimp_Poll`, `Wimp_OpenWindow`, `Wimp_CloseDown`, the Template and Menu code and `Icon_Printf`. The other veneers have been compiled but not run (docs/STATUS.md).
 
 ---
 
